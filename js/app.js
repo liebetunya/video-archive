@@ -5,7 +5,8 @@
   var STORAGE_KEY = "eunjo-archive-overrides-v1";
   var EXPORT_KIND = "eunjo-video-overrides";
 
-  var KAKAO_CATS = ["암웨이 관련", "일반 영상", "소비자에게", "미분류"];
+  var KAKAO_CATS = ["암웨이 관련", "일반 영상", "미분류"];
+  var KAKAO_VALID_CATS = KAKAO_CATS.concat(["소비자에게"]);
   var KAKAO_SUBS = ["제품설명", "사업·강의"];
   var CHANNEL_CATS = ["박주희북텔링", "최현홍북텔링", "화목한9시", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류", "코칭"];
   var BOOK_CHIP_CATS = ["박주희북텔링"];
@@ -27,6 +28,7 @@
     wrap: $("wrap"),
     tabKakao: $("tab-kakao"),
     tabChannel: $("tab-channel"),
+    tabConsumer: $("tab-consumer"),
     q: $("q"),
     clearQ: $("clear-q"),
     chips: $("chips"),
@@ -425,8 +427,12 @@
     return compact.length > 0 && item.searchCompact.indexOf(compact) !== -1;
   }
 
+  function isConsumerItem(item) {
+    return item.category === "소비자에게";
+  }
+
   function baseItems() {
-    if (state.tab === "kakao") return state.kakao;
+    if (state.tab === "kakao" || state.tab === "consumer") return state.kakao;
     return state.coachingOpen ? state.channel.concat(state.coaching) : state.channel;
   }
 
@@ -453,7 +459,10 @@
 
   function filtered(items) {
     var list = items;
-    if (state.tab === "kakao") {
+    if (state.tab === "consumer") {
+      list = list.filter(isConsumerItem);
+    } else if (state.tab === "kakao") {
+      list = list.filter(function (item) { return !isConsumerItem(item); });
       if (state.category !== "전체") list = list.filter(function (item) { return item.category === state.category; });
       if (state.category === "암웨이 관련" && state.sub !== "전체") {
         list = list.filter(function (item) { return item.subcategory === state.sub; });
@@ -479,7 +488,7 @@
   }
 
   function currentMoves() {
-    return state.tab === "kakao" ? KAKAO_MOVES : CHANNEL_MOVES;
+    return state.tab === "channel" ? CHANNEL_MOVES : KAKAO_MOVES;
   }
 
   function localCoachingCount() {
@@ -531,6 +540,15 @@
   }
 
   function renderChips(items) {
+    if (state.tab === "consumer") {
+      els.chips.hidden = true;
+      els.subchips.hidden = true;
+      return;
+    }
+    els.chips.hidden = false;
+    if (state.tab === "kakao") {
+      items = items.filter(function (item) { return !isConsumerItem(item); });
+    }
     var chipScroll = els.chips.scrollLeft;
     var subScroll = els.subchips.scrollLeft;
     var counts = countBy(items, "category");
@@ -828,6 +846,7 @@
     if (state.loading) return;
     els.tabKakao.setAttribute("aria-selected", state.tab === "kakao" ? "true" : "false");
     els.tabChannel.setAttribute("aria-selected", state.tab === "channel" ? "true" : "false");
+    els.tabConsumer.setAttribute("aria-selected", state.tab === "consumer" ? "true" : "false");
     els.clearQ.hidden = !state.query;
 
     var matched = searched();
@@ -974,7 +993,7 @@
     if (key !== entry.source + ":" + entry.id) return false;
     if (hasOwn(entry, "description") && typeof entry.description !== "string") return false;
     if (entry.source === "kakao") {
-      if (KAKAO_CATS.indexOf(entry.category) === -1) return false;
+      if (KAKAO_VALID_CATS.indexOf(entry.category) === -1) return false;
       if (entry.category === "암웨이 관련") return KAKAO_SUBS.indexOf(entry.subcategory) !== -1;
       return !entry.subcategory;
     }
@@ -1051,7 +1070,17 @@
     saveOverrides();
     state.selected.clear();
     els.moveCat.value = "";
-    if (state.tab === "channel" && choice.category === "코칭") {
+    if (choice.category === "소비자에게") {
+      state.tab = "consumer";
+      state.category = "전체";
+      state.sub = "전체";
+      state.shown = PAGE;
+    } else if (state.tab === "consumer") {
+      state.tab = "kakao";
+      state.category = choice.category || "전체";
+      state.sub = choice.subcategory || "전체";
+      state.shown = PAGE;
+    } else if (state.tab === "channel" && choice.category === "코칭") {
       state.category = "코칭";
       state.shown = PAGE;
     }
@@ -1061,6 +1090,7 @@
 
   els.tabKakao.addEventListener("click", function () { setTab("kakao"); });
   els.tabChannel.addEventListener("click", function () { setTab("channel"); });
+  els.tabConsumer.addEventListener("click", function () { setTab("consumer"); });
   function syncSearchPadding() {
     els.q.parentElement.classList.toggle("has-value", els.q.value.length > 0);
   }

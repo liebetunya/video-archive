@@ -55,6 +55,12 @@
     pwCancel: $("pw-cancel"),
     pwLocal: $("pw-local"),
     toast: $("toast"),
+    descBackdrop: $("desc-backdrop"),
+    descSheetPrefix: $("desc-sheet-prefix"),
+    descSheetHint: $("desc-sheet-hint"),
+    descSheetText: $("desc-sheet-text"),
+    descSheetSave: $("desc-sheet-save"),
+    descSheetCancel: $("desc-sheet-cancel"),
   };
 
   var state = {
@@ -78,6 +84,9 @@
     vaultPayload: null,
     vaultRequest: 0,
     lastFocus: null,
+    editing: null,
+    editDraft: "",
+    descFocus: false,
   };
 
   function h(tag, props, children) {
@@ -276,15 +285,125 @@
 
   function keyOf(item) { return item.source + ":" + item.id; }
 
+  function hasOwn(obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
   function viewOf(item) {
     var saved = state.overrides[keyOf(item)];
     if (!saved) return item;
-    if (saved.category === item.category && (saved.subcategory || null) === (item.subcategory || null)) return item;
-    return Object.assign({}, item, {
-      category: saved.category,
-      subcategory: saved.subcategory || null,
-      overridden: true,
-    });
+    var catChanged = saved.category !== item.category || (saved.subcategory || null) !== (item.subcategory || null);
+    var descChanged = hasOwn(saved, "description") && String(saved.description || "").trim() !== (item.description || "");
+    if (!catChanged && !descChanged) return item;
+    var next = Object.assign({}, item);
+    if (catChanged) {
+      next.category = saved.category;
+      next.subcategory = saved.subcategory || null;
+      next.overridden = true;
+    }
+    if (descChanged) {
+      next.description = String(saved.description || "").trim();
+      next.descOverridden = true;
+      withSearch(next);
+    }
+    return next;
+  }
+
+  function isMobileEditor() {
+    return window.matchMedia("(max-width: 719px)").matches;
+  }
+
+  function pencilIcon() {
+    var wrap = document.createElement("span");
+    wrap.setAttribute("aria-hidden", "true");
+    wrap.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path></svg>';
+    return wrap;
+  }
+
+  function saveDescription(raw, text) {
+    var key = keyOf(raw);
+    var desc = String(text || "").trim();
+    var prev = state.overrides[key];
+    var category = prev ? prev.category : raw.category;
+    var subcategory = prev ? (prev.subcategory || null) : (raw.subcategory || null);
+    var catSame = category === raw.category && subcategory === (raw.subcategory || null);
+    var descSame = desc === (raw.description || "");
+    if (catSame && descSame) delete state.overrides[key];
+    else {
+      var entry = {
+        source: raw.source,
+        id: raw.id,
+        category: category,
+        subcategory: subcategory,
+      };
+      if (!descSame) entry.description = desc;
+      state.overrides[key] = entry;
+    }
+    saveOverrides();
+  }
+
+  function openDescEditor(item) {
+    state.editing = keyOf(item);
+    state.editDraft = item.description || "";
+    state.descFocus = true;
+    state.lastFocus = document.activeElement;
+    render();
+  }
+
+  function closeDescEditor() {
+    state.editing = null;
+    state.editDraft = "";
+    state.descFocus = false;
+    if (els.descBackdrop) els.descBackdrop.hidden = true;
+    if (els.backdrop.hidden) els.wrap.inert = false;
+    render();
+  }
+
+  function saveDescEditor() {
+    var raw = state.editing ? findRaw(state.editing) : null;
+    if (!raw) {
+      closeDescEditor();
+      return;
+    }
+    saveDescription(raw, state.editDraft);
+    state.editing = null;
+    state.editDraft = "";
+    state.descFocus = false;
+    toast("설명을 이 브라우저에 저장했어요.");
+    render();
+  }
+
+  function renderDescSheet() {
+    var open = !!(state.editing && isMobileEditor());
+    els.descBackdrop.hidden = !open;
+    if (els.backdrop.hidden) els.wrap.inert = open;
+    if (!open) return;
+    var raw = findRaw(state.editing);
+    var item = raw ? viewOf(raw) : null;
+    var rec = item && item.source === "kakao" ? (item.recommendLabel || "") : "";
+    if (rec) {
+      els.descSheetPrefix.hidden = false;
+      els.descSheetPrefix.textContent = rec;
+      els.descSheetHint.hidden = false;
+    } else {
+      els.descSheetPrefix.hidden = true;
+      els.descSheetHint.hidden = true;
+    }
+    if (document.activeElement !== els.descSheetText) {
+      els.descSheetText.value = state.editDraft;
+    }
+  }
+
+  function focusDescEditor() {
+    if (!state.descFocus || !state.editing) return;
+    state.descFocus = false;
+    setTimeout(function () {
+      var field = isMobileEditor() ? els.descSheetText : document.querySelector(".desc-input");
+      if (!field) return;
+      field.focus();
+      var len = field.value.length;
+      try { field.setSelectionRange(len, len); } catch (error) { /* ignore */ }
+    }, 30);
   }
 
   function findRaw(key) {
@@ -575,24 +694,56 @@
 
     var descText = item.description || "";
     var recLabel = item.source === "kakao" ? item.recommendLabel : "";
-    if (recLabel || descText) {
-      var descOpen = state.descExpanded.has(key);
-      var longDesc = descText.length > 180;
-      var desc = h("p", { class: longDesc && !descOpen ? "desc clamp" : "desc" });
-      if (recLabel) desc.appendChild(h("span", { class: "rec-label", text: recLabel }));
-      if (descText) desc.appendChild(document.createTextNode((recLabel ? " · " : "") + descText));
-      body.appendChild(desc);
-      if (longDesc) {
-        body.appendChild(h("button", {
-          type: "button",
-          class: "review-btn",
-          onClick: function () {
-            if (descOpen) state.descExpanded.delete(key);
-            else state.descExpanded.add(key);
-            render();
-          },
-        }, descOpen ? "설명 접기" : "설명 더 보기"));
+    var editingHere = state.editing === key && !isMobileEditor();
+    var descBox = h("div", { class: "desc-box" });
+    if (editingHere) {
+      if (recLabel) {
+        descBox.appendChild(h("p", { class: "desc-prefix" }, [
+          h("span", { class: "rec-label", text: recLabel }),
+          " ",
+          h("span", { class: "desc-prefix-note", text: "추천일은 자동으로 붙어요" }),
+        ]));
       }
+      var ta = h("textarea", {
+        class: "desc-input",
+        rows: "5",
+        placeholder: "제목과 후기를 참고해 설명을 적어 주세요",
+      });
+      ta.value = state.editDraft;
+      ta.addEventListener("input", function () { state.editDraft = ta.value; });
+      descBox.appendChild(ta);
+      descBox.appendChild(h("div", { class: "desc-actions" }, [
+        h("button", { type: "button", class: "btn-ghost desc-cancel", onClick: function () { closeDescEditor(); } }, "취소"),
+        h("button", { type: "button", class: "btn-primary desc-save", onClick: function () { saveDescEditor(); } }, "저장"),
+      ]));
+      body.appendChild(descBox);
+    } else {
+      if (recLabel || descText) {
+        var descOpen = state.descExpanded.has(key);
+        var longDesc = descText.length > 180;
+        var desc = h("p", { class: longDesc && !descOpen ? "desc clamp" : "desc" });
+        if (recLabel) desc.appendChild(h("span", { class: "rec-label", text: recLabel }));
+        if (descText) desc.appendChild(document.createTextNode((recLabel ? " · " : "") + descText));
+        descBox.appendChild(desc);
+        if (longDesc) {
+          descBox.appendChild(h("button", {
+            type: "button",
+            class: "review-btn",
+            onClick: function () {
+              if (descOpen) state.descExpanded.delete(key);
+              else state.descExpanded.add(key);
+              render();
+            },
+          }, descOpen ? "설명 접기" : "설명 더 보기"));
+        }
+      }
+      descBox.appendChild(h("button", {
+        type: "button",
+        class: "desc-edit-btn",
+        "aria-label": "설명 수정: " + item.title,
+        onClick: function () { openDescEditor(item); },
+      }, [pencilIcon(), "설명 수정"]));
+      body.appendChild(descBox);
     }
 
     var people = [];
@@ -611,7 +762,14 @@
     if (item.category === "미분류" && item.suggested) {
       body.appendChild(h("p", { class: "hint", text: "추천 분류 · " + item.suggested }));
     }
-    if (item.overridden) body.appendChild(h("p", { class: "edited", text: "이 브라우저에서 분류를 바꿨어요" }));
+    if (item.overridden || item.descOverridden) {
+      var editedLabel = item.overridden && item.descOverridden
+        ? "이 브라우저에서 분류와 설명을 바꿨어요"
+        : item.descOverridden
+          ? "이 브라우저에서 설명을 바꿨어요"
+          : "이 브라우저에서 분류를 바꿨어요";
+      body.appendChild(h("p", { class: "edited", text: editedLabel }));
+    }
 
     if (item.source === "kakao" && item.reviews.length) {
       var open = state.expanded.has(key);
@@ -685,8 +843,10 @@
     if (editCount) meta += " · 브라우저 수정 " + editCount + "건";
     els.meta.textContent = meta;
     els.note.textContent = editCount
-      ? "이 브라우저에만 분류 변경 " + editCount + "건이 저장되어 있어요. 다른 기기나 저장소에는 반영되지 않아요."
+      ? "이 브라우저에만 변경 " + editCount + "건이 저장되어 있어요. 다른 기기나 저장소에는 반영되지 않아요."
       : "변경사항은 이 브라우저에만 저장됩니다. 다른 기기에는 내보낸 파일을 가져와 주세요.";
+    renderDescSheet();
+    focusDescEditor();
 
     var coachingMatches = state.coachingOpen
       ? state.coaching.map(viewOf).filter(function (item) {
@@ -811,6 +971,7 @@
     if (!entry || typeof entry !== "object") return false;
     if (typeof entry.source !== "string" || typeof entry.id !== "string" || !entry.id) return false;
     if (key !== entry.source + ":" + entry.id) return false;
+    if (hasOwn(entry, "description") && typeof entry.description !== "string") return false;
     if (entry.source === "kakao") {
       if (KAKAO_CATS.indexOf(entry.category) === -1) return false;
       if (entry.category === "암웨이 관련") return KAKAO_SUBS.indexOf(entry.subcategory) !== -1;
@@ -838,6 +999,7 @@
         category: entry.category,
         subcategory: entry.source === "kakao" && entry.category === "암웨이 관련" ? entry.subcategory : null,
       };
+      if (hasOwn(entry, "description")) next[key].description = entry.description;
     });
     return next;
   }
@@ -868,14 +1030,20 @@
       var item = findRaw(key);
       if (!item) return;
       var same = item.category === choice.category && (item.subcategory || null) === (choice.subcategory || null);
-      if (same) delete state.overrides[key];
+      var prev = state.overrides[key];
+      var keepDesc = hasOwn(prev || {}, "description");
+      if (same && !(keepDesc && prev.description !== (item.description || ""))) delete state.overrides[key];
       else {
-        state.overrides[key] = {
+        var entry = {
           source: item.source,
           id: item.id,
           category: choice.category,
           subcategory: choice.subcategory,
         };
+        if (keepDesc) entry.description = prev.description;
+        if (same && keepDesc && entry.description === (item.description || "")) delete entry.description;
+        if (same && !hasOwn(entry, "description")) delete state.overrides[key];
+        else state.overrides[key] = entry;
       }
       count += 1;
     });
@@ -941,7 +1109,7 @@
       try {
         var next = parseImport(JSON.parse(String(reader.result || "")));
         var current = Object.keys(state.overrides).length;
-        if (current && !window.confirm("이 브라우저의 분류 변경 " + current + "건을 가져온 파일로 바꿀까요?")) return;
+        if (current && !window.confirm("이 브라우저의 변경 " + current + "건을 가져온 파일로 바꿀까요?")) return;
         state.overrides = next;
         saveOverrides();
         state.selected.clear();
@@ -970,9 +1138,25 @@
   els.backdrop.addEventListener("click", function (event) {
     if (event.target === els.backdrop) closePassword();
   });
+  els.descSheetText.addEventListener("input", function () {
+    state.editDraft = els.descSheetText.value;
+  });
+  els.descSheetSave.addEventListener("click", saveDescEditor);
+  els.descSheetCancel.addEventListener("click", closeDescEditor);
+  els.descBackdrop.addEventListener("click", function (event) {
+    if (event.target === els.descBackdrop) closeDescEditor();
+  });
+  window.matchMedia("(max-width: 719px)").addEventListener("change", function () {
+    if (state.editing) {
+      state.descFocus = true;
+      render();
+    }
+  });
   document.addEventListener("keydown", function (event) {
     if (event.key === "Escape" && !els.backdrop.hidden) closePassword();
-    if (event.key === "/" && document.activeElement !== els.q && document.activeElement !== els.pw) {
+    else if (event.key === "Escape" && state.editing) closeDescEditor();
+    var typing = document.activeElement === els.q || document.activeElement === els.pw || (document.activeElement && document.activeElement.tagName === "TEXTAREA");
+    if (event.key === "/" && !typing) {
       event.preventDefault();
       els.q.focus();
     }

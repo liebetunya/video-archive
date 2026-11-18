@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""브라우저에서 내보낸 분류 변경을 데이터 JSON에 반영합니다.
+"""브라우저에서 내보낸 분류·설명 변경을 데이터 JSON에 반영합니다.
 
 변경 파일 형식 (js/app.js 가 내려주는 파일과 같습니다)::
 
@@ -13,7 +13,8 @@
           "source": "kakao",
           "id": "VIDEO_ID",
           "category": "일반 영상",
-          "subcategory": null
+          "subcategory": null,
+          "description": "설명을 바꿨다면 이 필드가 들어갑니다."
         },
         "channel:VIDEO_ID": {
           "source": "channel",
@@ -26,6 +27,8 @@
 
 키는 ``소스:영상id`` 입니다. 소스는 kakao, channel, coaching 중 하나입니다.
 같은 유튜브 id가 카톡과 채널에 모두 있을 수 있어 소스를 함께 적습니다.
+설명만 바꾼 경우에도 category, subcategory 는 현재 값으로 들어 있고, description 만
+달라집니다. description 필드가 없으면 설명은 건드리지 않습니다.
 
 코칭으로 옮긴 채널 영상은 공개 채널 JSON에서 빼서 ``--coaching`` 평문 파일에 붙입니다.
 코칭 평문에서 다른 분류로 옮기면 공개 채널 JSON으로 돌아갑니다.
@@ -145,7 +148,10 @@ def validate_entry(key: str, entry: dict):
         subcategory = None
     else:
         die(key + ": source 는 kakao, channel, coaching 중 하나여야 합니다.")
-    return source, video_id, category, subcategory
+    if "description" in entry and not isinstance(entry.get("description"), str):
+        die(key + ": description 은 문자열이어야 합니다.")
+    description = entry["description"] if "description" in entry else None
+    return source, video_id, category, subcategory, description
 
 
 def index_by_id(videos: list, label: str) -> dict:
@@ -173,7 +179,7 @@ def load_coaching(path: Path | None):
 
 def main() -> None:
     configure_stdio()
-    parser = argparse.ArgumentParser(description="분류 변경 JSON을 카톡/채널/코칭 데이터에 반영합니다.")
+    parser = argparse.ArgumentParser(description="분류·설명 변경 JSON을 카톡/채널/코칭 데이터에 반영합니다.")
     parser.add_argument("overrides", type=Path, help="사이트에서 내보낸 JSON")
     parser.add_argument("--kakao", required=True, type=Path, help="data/kakao.json")
     parser.add_argument("--channel", required=True, type=Path, help="data/channel.json")
@@ -205,7 +211,7 @@ def main() -> None:
     seen = set()
     needs_coaching = False
     for key, entry in overrides.items():
-        source, video_id, category, subcategory = validate_entry(key, entry)
+        source, video_id, category, subcategory, description = validate_entry(key, entry)
         identity = ("kakao", video_id) if source == "kakao" else ("mine", video_id)
         if identity in seen:
             die("같은 영상이 두 번 지정되었습니다: " + source + ":" + video_id)
@@ -220,6 +226,7 @@ def main() -> None:
                 "item": item,
                 "category": category,
                 "subcategory": subcategory,
+                "description": description,
             })
             continue
 
@@ -242,6 +249,7 @@ def main() -> None:
             "current": current,
             "target": target,
             "source": source,
+            "description": description,
         })
 
     if needs_coaching and coaching_videos is None:
@@ -252,20 +260,39 @@ def main() -> None:
     channel_dirty = False
     coaching_dirty = False
 
+    def apply_description(item, plan) -> bool:
+        if plan.get("description") is None:
+            return False
+        new_desc = plan["description"].strip()
+        old_desc = item.get("description") if isinstance(item.get("description"), str) else ""
+        if old_desc == new_desc:
+            return False
+        item["description"] = new_desc
+        return True
+
     for plan in plans:
         item = plan["item"]
         video_id = item.get("id")
         before = item.get("category")
+        desc_changed = apply_description(item, plan)
+        desc_note = ""
+        if plan.get("description") is not None:
+            desc_note = " · 설명 수정" if desc_changed else " · 설명 (이미 반영됨)"
         if plan["kind"] == "kakao":
             after_sub = plan["subcategory"]
             changed = item.get("category") != plan["category"] or item.get("subcategory") != after_sub
             if changed:
                 item["category"] = plan["category"]
                 item["subcategory"] = after_sub
+            if changed or desc_changed:
                 kakao_dirty = True
             label = plan["category"] + (" · " + after_sub if after_sub else "")
-            suffix = "" if changed else " (이미 반영됨)"
-            notes.append("카톡 " + video_id + ": " + str(before) + " → " + label + suffix)
+            if changed:
+                notes.append("카톡 " + video_id + ": " + str(before) + " → " + label + desc_note)
+            elif desc_changed:
+                notes.append("카톡 " + video_id + ": 설명 수정")
+            else:
+                notes.append("카톡 " + video_id + ": " + str(before) + " → " + label + " (이미 반영됨)" + desc_note)
             continue
 
         changed = item.get("category") != plan["category"]
@@ -278,11 +305,11 @@ def main() -> None:
             source_list.remove(item)
             dest_list.append(item)
             changed = True
-        if changed and plan["current"] == "channel":
+        if (changed or desc_changed) and plan["current"] == "channel":
             channel_dirty = True
-        if changed and plan["target"] == "channel":
+        if (changed or desc_changed) and plan["target"] == "channel":
             channel_dirty = True
-        if changed and (plan["current"] == "coaching" or plan["target"] == "coaching"):
+        if (changed or desc_changed) and (plan["current"] == "coaching" or plan["target"] == "coaching"):
             coaching_dirty = True
         where = ""
         if moved and plan["target"] == "coaching":
@@ -291,8 +318,12 @@ def main() -> None:
             where = " · 코칭 평문에서 공개 목록으로 이동"
         elif plan["source"] != plan["current"] and not moved and not changed:
             where = " · 기록된 source는 " + plan["source"] + ", 실제 위치는 " + plan["current"]
-        suffix = "" if changed else " (이미 반영됨)"
-        notes.append("채널 " + video_id + ": " + str(before) + " → " + plan["category"] + where + suffix)
+        if changed:
+            notes.append("채널 " + video_id + ": " + str(before) + " → " + plan["category"] + where + desc_note)
+        elif desc_changed:
+            notes.append("채널 " + video_id + ": 설명 수정" + where)
+        else:
+            notes.append("채널 " + video_id + ": " + str(before) + " → " + plan["category"] + where + " (이미 반영됨)" + desc_note)
 
     if kakao_dirty:
         refresh_kakao_counts(kakao_data)

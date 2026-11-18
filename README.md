@@ -1,2 +1,127 @@
-# video-archive
-굿모닝요 추천영상 + 내 채널 영상 아카이브
+# 은조 영상 아카이브
+
+평일 아침 카카오톡 ‘굿모닝요’로 나눈 추천 영상과, 은조 채널의 공개 영상을 한 화면에서 찾고 분류하는 정적 사이트입니다. 서버나 빌드 없이 `index.html`만으로 열립니다.
+
+분석 도구나 외부 추적 스크립트는 넣지 않았습니다. 글꼴만 Pretendard CDN을 사용합니다.
+
+## 화면
+
+- **카톡 추천영상**: 카톡에 올라온 유튜브 링크. 분류는 `암웨이 관련`(하위 `제품설명`, `사업·강의`), `일반 영상`, `미분류`.
+- **내 채널 영상**: 공개 채널 영상. 분류는 `아침북미팅`, `화목한9시`, `제품설명`, `박주희`, `최현홍`, `강의와미팅`, `미분류`, 그리고 비밀번호가 필요한 `코칭` 순입니다. 제목에 `화목한9시` 또는 `화목한 9시`가 있는 영상은 `화목한9시`입니다. 화면에서 옮길 때도 그 분류를 고를 수 있습니다.
+- **아침북미팅**을 고르면 책 이름 칩이 가로로 스크롤됩니다. 이름은 `book` 필드를 쓰고, 비어 있으면 제목에서 첫 숫자나 괄호 앞부분을 씁니다. 그것도 없으면 `기타`입니다. 칩에는 개수가 붙고, `전체`도 있습니다. 책을 고르면 그 책만 날짜가 빠른 순(읽는 순서)으로 나옵니다. 책 이름은 검색에도 걸립니다.
+- 분류 칩에 개수가 표시됩니다. `미분류`도 그대로 두어 나중에 정리할 수 있고, `suggested_category`가 있으면 **추천 분류**로 보여 줍니다.
+- 검색은 제목, 채널, 태그, 책, 발표자, 캡션, 후기 글, 그리고 카톡 추천일의 `YYMMDD`를 봅니다. 예를 들어 `261117`을 치면 2026-11-17에 올라온 영상이 나옵니다. 목록은 공유일(`post_date`)이 최신인 것부터입니다.
+- 카드의 썸네일과 제목은 유튜브로 새 탭에서 열립니다. 재생목록은 썸네일 대신 자리 표시가 나옵니다. 카톡 영상은 **후기**를 펼쳐 볼 수 있습니다.
+- 카톡 카드 설명란 맨 앞에는 추천일이 `261117화 추천`처럼 붙습니다. 요일은 `월화수목금토일` 한 글자입니다. 설명이 비어 있으면 이 문구만 보이고, 설명이 채워지면 `261117화 추천 · 설명`으로 이어집니다. 채널 영상은 설명이 비어 있으면 그 칸을 숨깁니다.
+- 휴대폰은 한 줄, 넓은 화면은 여러 줄입니다. 한 번에 24개씩 보여주고 **더 보기**로 이어서 불러 썸네일은 늦게 읽습니다.
+
+## 로컬에서 보기
+
+브라우저에서 `index.html`을 파일로 바로 열면 데이터 JSON을 막습니다. 저장소 루트에서 정적 서버를 띄우세요.
+
+```bash
+python3 -m http.server 8080
+```
+
+브라우저에서 `http://localhost:8080` 을 엽니다.
+
+## GitHub Pages
+
+저장소 **Settings → Pages → Build and deployment → Deploy from a branch** 에서 브랜치를 `main`, 폴더를 `/ (root)` 로 두면 됩니다. 루트의 `index.html`이 첫 화면이고, 별도 빌드는 없습니다. `.nojekyll` 파일이 있어 Jekyll이 `data/`를 건드리지 않습니다.
+
+주소는 `https://<계정>.github.io/video-archive/` 형태입니다. 링크는 상대 경로라 프로젝트 사이트 하위 주소에서도 동작합니다.
+
+## 데이터 고치기
+
+| 파일 | 내용 |
+| --- | --- |
+| `data/kakao.json` | 카톡 추천 영상. `{ "videos": [ ... ] }` |
+| `data/channel.json` | 공개 채널 영상. 배열 |
+| `data/coaching.enc.json` | 코칭 영상. 암호문만 둡니다 |
+
+영상을 추가하거나 제목·분류를 고칠 때는 이 JSON을 수정하고 커밋하면 됩니다. 사이트는 이 파일을 그대로 읽습니다. 채널 파일을 갈아 끼운 뒤에는 제목 규칙을 한 번 적용하세요.
+
+```bash
+python3 scripts/classify_channel.py data/channel.json
+```
+
+제목에 `화목한9시` 또는 `화목한 9시`가 있으면 분류를 `화목한9시`로 맞춥니다. 이미 그 분류인 영상은 건드리지 않습니다. `--dry-run`을 붙이면 파일은 쓰지 않습니다.
+
+카톡 영상 필드: `id`, `url`, `type`(`watch`/`playlist`/`live`), `post_date`, `title`, `channel`, `duration`(초 또는 없음), `upload_date`, `caption`, `description`, `category`, `subcategory`, `suggested_category`, `tags`, `metadata_incomplete`, `reviews`. 후기의 `author_masked`는 이미 가려진 이름입니다.
+
+채널 영상 필드: `id`, `url`, `date`, `duration`(`mm:ss`), `title`, `category`, `book`, `speakers`, `auto_reason`, `suggested_category`.
+
+## 분류를 화면에서 바꾸기
+
+각 카드에 큰 체크가 있습니다. 하나 이상 고르면 아래쪽에 막대가 나오고, 분류를 고른 뒤 **이동**을 누릅니다.
+
+- 변경은 이 브라우저의 `localStorage`에만 저장됩니다. 키는 `eunjo-archive-overrides-v1` 입니다. 서버로 전송되지 않고, 다른 기기·다른 브라우저에는 없습니다.
+- 페이지를 다시 열어도 이 브라우저에서는 덮어쓴 분류가 유지됩니다. 원래 JSON과 같게 되돌리면 그 항목의 덮어쓰기는 지워집니다.
+- **변경사항 내보내기**는 덮어쓰기 JSON을 내려받습니다. **가져오기**는 그 파일로 이 브라우저의 덮어쓰기를 바꿉니다.
+- 화면의 안내 문구대로, 저장소의 데이터 파일에 반영하려면 아래 스크립트가 필요합니다.
+
+내보낸 파일 예:
+
+```json
+{
+  "version": 1,
+  "kind": "eunjo-video-overrides",
+  "exportedAt": "2026-11-18T00:00:00.000Z",
+  "overrides": {
+    "kakao:VIDEO_ID": {
+      "source": "kakao",
+      "id": "VIDEO_ID",
+      "category": "일반 영상",
+      "subcategory": null
+    },
+    "channel:VIDEO_ID": {
+      "source": "channel",
+      "id": "VIDEO_ID",
+      "category": "코칭",
+      "subcategory": null
+    }
+  }
+}
+```
+
+키는 `소스:영상id` 입니다. 같은 유튜브 영상이 카톡과 채널에 둘 다 있을 수 있어 소스를 나눕니다. `source`는 `kakao`, `channel`, `coaching` 중 하나입니다.
+
+데이터 파일에 반영:
+
+```bash
+python3 scripts/apply_overrides.py ./eunjo-overrides-2026-11-18.json \
+  --kakao data/kakao.json \
+  --channel data/channel.json \
+  --coaching /저장소/밖/coaching.private.json \
+  --dry-run
+```
+
+`--dry-run`을 빼면 파일을 실제로 고칩니다. 코칭으로 옮기거나 코칭 평문에만 있는 영상을 건드릴 때는 `--coaching`이 필요합니다.
+
+- 채널 영상을 `코칭`으로 옮기면 공개 `data/channel.json`에서 빠지고 코칭 평문 파일로 갑니다.
+- 코칭 영상을 다른 분류로 옮기면 평문에서 빠지고 공개 채널 목록으로 돌아갑니다.
+- 같은 파일을 한 번 더 실행해도 이미 반영된 항목은 다시 쓰지 않습니다.
+- 반영한 뒤에는 아래 절차로 `data/coaching.enc.json`을 다시 만들고, **평문 파일은 커밋하지 마세요.**
+
+표준 라이브러리만 사용합니다. Python 3.9 이상이면 됩니다.
+
+## 코칭 영상 암호화
+
+코칭 목록은 저장소에 평문으로 두지 않습니다. 브라우저가 WebCrypto로 풀 수 있게 AES-256-GCM으로 잠그고, 키는 PBKDF2-SHA256(210,000회, 무작위 salt)으로 비밀번호에서 만듭니다. IV도 매번 새로 뽑습니다. 암호문은 `ciphertext || 16바이트 인증 태그`를 표준 Base64로 넣은 JSON입니다.
+
+```bash
+export COACHING_PASSWORD='비밀번호'
+node scripts/encrypt_coaching.js /저장소/밖/coaching.private.json data/coaching.enc.json
+```
+
+- 비밀번호는 환경변수 `COACHING_PASSWORD`로만 넘깁니다. 명령 인자로 넣지 마세요.
+- Node.js 18 이상이 필요합니다. 추가 패키지는 없습니다.
+- 입력은 채널 영상과 같은 모양의 JSON 배열이거나 `{ "videos": [ ... ] }` 입니다.
+- `data/` 안의 파일은 입력으로 거부합니다. 평문을 그 폴더에 두지 않기 위해서입니다.
+- 저장 전에 WebCrypto로 한 번 풀어 보고, 원문과 같아야 파일을 씁니다.
+- 화면의 **코칭** 칩에는 자물쇠가 있습니다. 누르면 비밀번호를 묻고, 맞는 동안에만 그 탭의 메모리에 목록을 둡니다. 브라우저를 닫거나 **다시 잠그기**를 누르면 사라집니다. 비밀번호는 저장하지 않습니다.
+- 코칭으로 옮긴 공개 영상은 비밀번호 없이도 “옮긴 영상만 보기”로 이 브라우저에서 확인할 수 있습니다. 암호화된 목록과 합쳐 보려면 비밀번호가 필요합니다.
+
+지금 저장소의 `data/coaching.enc.json`은 **빈 목록**을 임의의 일회용 비밀번호로 잠근 자리표시자입니다. 그 비밀번호는 적어두지 않았으므로 이 파일은 열리지 않습니다. 실제 코칭 영상이 준비되면 평문 JSON을 저장소 밖에 두고 위 명령으로 `data/coaching.enc.json`만 다시 만들어 커밋하면 됩니다.
+
+암호문 JSON 필드는 `version`, `kind`(`eunjo-coaching-vault`), `alg`, `kdf`, `iterations`, `salt`, `iv`, `ciphertext` 입니다.

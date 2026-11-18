@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "kind": "eunjo-coaching-vault",
+  "alg": "AES-256-GCM",
+  "kdf": "PBKDF2-SHA256",
+  "iterations": 210000,
+  "salt": "YI5zgKRl1ol90gegDUoX7Q==",
+  "iv": "TvKelZCj1bYKoQfF",
+  "ciphertext": "fF5dSFq2rKU5X5kxYp7Y5mAR"
+}

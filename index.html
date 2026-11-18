@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F2F4F6">
+  <meta name="description" content="굿모닝요 카톡 추천영상과 은조 채널 영상을 모아 둔 아카이브">
+  <title>은조 영상 아카이브</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip" href="#grid">영상 목록으로 건너뛰기</a>
+  <div class="wrap" id="wrap">
+    <header class="hero">
+      <p class="eyebrow">은조 · 평일 아침</p>
+      <h1>영상 아카이브</h1>
+      <p class="lede">카톡 ‘굿모닝요’로 나눈 추천영상과 내 채널 영상을 한곳에서 찾아요.</p>
+    </header>
+
+    <div class="sticky">
+      <div class="segment" role="tablist" aria-label="영상 종류">
+        <button type="button" id="tab-kakao" role="tab" aria-selected="true" aria-controls="grid">카톡 추천영상</button>
+        <button type="button" id="tab-channel" role="tab" aria-selected="false" aria-controls="grid">내 채널 영상</button>
+      </div>
+      <div class="search">
+        <svg class="search-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="M20 20l-3.5-3.5"></path>
+        </svg>
+        <label class="sr" for="q">검색</label>
+        <input id="q" type="search" placeholder="제목, 채널, 태그, 책, 발표자, 후기 검색" autocomplete="off" enterkeyhint="search">
+        <button type="button" id="clear-q" class="clear-q" hidden>지우기</button>
+      </div>
+      <div id="chips" class="chips" role="group" aria-label="분류"></div>
+      <div id="subchips" class="chips subchips" role="group" aria-label="암웨이 하위 분류" hidden></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="toolbar-row">
+        <p id="result-meta" class="result-meta" aria-live="polite">불러오는 중</p>
+        <div class="toolbar-actions">
+          <button type="button" id="export-btn">변경사항 내보내기</button>
+          <button type="button" id="import-btn">가져오기</button>
+          <input id="import-file" type="file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+      <p id="save-note" class="note">변경사항은 이 브라우저에만 저장됩니다. 다른 기기에는 내보낸 파일을 가져와 주세요.</p>
+    </div>
+
+    <div id="coach-note" class="coach-note" hidden>
+      <p id="coach-note-text"></p>
+      <button type="button" id="coach-unlock" hidden>잠금 열기</button>
+      <button type="button" id="coach-lock" hidden>다시 잠그기</button>
+    </div>
+    <div id="status" class="status">영상을 불러오는 중이에요.</div>
+    <div id="grid" class="grid"></div>
+    <button type="button" id="more" class="more" hidden>더 보기</button>
+  </div>
+
+  <div id="bar" class="bar" hidden>
+    <div class="bar-inner">
+      <p id="sel-count" class="sel-count">0개 선택</p>
+      <div class="bar-controls">
+        <select id="move-cat" aria-label="옮길 분류"></select>
+        <button type="button" id="move-btn" disabled>이동</button>
+        <button type="button" id="clear-sel">해제</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="backdrop" class="backdrop" hidden>
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="pw-title">
+      <form id="pw-form">
+        <h2 id="pw-title">코칭 영상 열기</h2>
+        <p class="dialog-copy">비밀번호는 이 기기에 저장하지 않아요. 페이지를 닫으면 다시 잠깁니다.</p>
+        <label class="sr" for="pw">비밀번호</label>
+        <input id="pw" type="password" maxlength="256" autocomplete="off" placeholder="비밀번호">
+        <p id="pw-error" class="pw-error" hidden></p>
+        <div class="dialog-actions">
+          <button type="button" id="pw-cancel" class="btn-ghost">취소</button>
+          <button type="submit" id="pw-ok" class="btn-primary">열기</button>
+        </div>
+        <button type="button" id="pw-local" class="btn-text" hidden>이 브라우저에서 옮긴 영상만 보기</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
+  <noscript><p class="note">자바스크립트를 켜야 아카이브를 볼 수 있어요.</p></noscript>
+  <script src="js/vault.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

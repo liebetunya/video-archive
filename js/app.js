@@ -216,13 +216,16 @@
     var reviews = Array.isArray(raw.reviews) ? raw.reviews.filter(function (review) {
       return review && (review.text_masked || review.author_masked);
     }) : [];
+    var source = raw.source === "playlist" ? "playlist" : "kakao";
+    var postDate = raw.post_date || "";
     return withSearch({
-      source: "kakao",
+      source: source,
       id: String(raw.id || "").trim(),
       url: raw.url || "",
       type: raw.type || "watch",
-      date: raw.post_date || "",
-      recommendLabel: recommendLabel(raw.post_date),
+      date: postDate,
+      recommendLabel: source === "kakao" ? recommendLabel(postDate) : "",
+      playlistOrder: typeof raw.playlist_order === "number" ? raw.playlist_order : null,
       title: raw.title || "(제목 없음)",
       channel: raw.channel || "",
       duration: formatDuration(raw.duration),
@@ -450,10 +453,21 @@
   }
 
   function compareItems(a, b) {
-    if (a.date !== b.date) {
-      if (bookOrder()) return a.date < b.date ? -1 : 1;
-      return a.date < b.date ? 1 : -1;
+    var aDated = !!a.date;
+    var bDated = !!b.date;
+    if (aDated !== bDated) return aDated ? -1 : 1;
+    if (aDated) {
+      if (a.date !== b.date) {
+        if (bookOrder()) return a.date < b.date ? -1 : 1;
+        return a.date < b.date ? 1 : -1;
+      }
+      return a.title.localeCompare(b.title, "ko");
     }
+    var ao = a.playlistOrder;
+    var bo = b.playlistOrder;
+    if (ao != null && bo != null && ao !== bo) return ao < bo ? -1 : 1;
+    if (ao != null && bo == null) return -1;
+    if (ao == null && bo != null) return 1;
     return a.title.localeCompare(b.title, "ko");
   }
 
@@ -992,7 +1006,7 @@
     if (typeof entry.source !== "string" || typeof entry.id !== "string" || !entry.id) return false;
     if (key !== entry.source + ":" + entry.id) return false;
     if (hasOwn(entry, "description") && typeof entry.description !== "string") return false;
-    if (entry.source === "kakao") {
+    if (entry.source === "kakao" || entry.source === "playlist") {
       if (KAKAO_VALID_CATS.indexOf(entry.category) === -1) return false;
       if (entry.category === "암웨이 관련") return KAKAO_SUBS.indexOf(entry.subcategory) !== -1;
       return !entry.subcategory;
@@ -1017,7 +1031,7 @@
         source: entry.source,
         id: entry.id,
         category: entry.category,
-        subcategory: entry.source === "kakao" && entry.category === "암웨이 관련" ? entry.subcategory : null,
+        subcategory: (entry.source === "kakao" || entry.source === "playlist") && entry.category === "암웨이 관련" ? entry.subcategory : null,
       };
       if (hasOwn(entry, "description")) next[key].description = entry.description;
     });

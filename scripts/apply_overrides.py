@@ -133,7 +133,7 @@ def validate_entry(key: str, entry: dict):
         die(key + ": source 와 id 가 필요합니다.")
     if key != source + ":" + video_id:
         die(key + ": 키는 source:id 이고 값의 source, id 와 같아야 합니다.")
-    if source == "kakao":
+    if source in ("kakao", "playlist"):
         if category not in KAKAO_CATEGORIES:
             die(key + ": 카톡에서 쓸 수 없는 분류입니다: " + str(category))
         if category == "암웨이 관련":
@@ -147,7 +147,7 @@ def validate_entry(key: str, entry: dict):
             die(key + ": 채널에서 쓸 수 없는 분류입니다: " + str(category))
         subcategory = None
     else:
-        die(key + ": source 는 kakao, channel, coaching 중 하나여야 합니다.")
+        die(key + ": source 는 kakao, playlist, channel, coaching 중 하나여야 합니다.")
     if "description" in entry and not isinstance(entry.get("description"), str):
         die(key + ": description 은 문자열이어야 합니다.")
     description = entry["description"] if "description" in entry else None
@@ -212,12 +212,12 @@ def main() -> None:
     needs_coaching = False
     for key, entry in overrides.items():
         source, video_id, category, subcategory, description = validate_entry(key, entry)
-        identity = ("kakao", video_id) if source == "kakao" else ("mine", video_id)
+        identity = ("kakao", video_id) if source in ("kakao", "playlist") else ("mine", video_id)
         if identity in seen:
             die("같은 영상이 두 번 지정되었습니다: " + source + ":" + video_id)
         seen.add(identity)
 
-        if source == "kakao":
+        if source in ("kakao", "playlist"):
             item = kakao_index.get(video_id)
             if item is None:
                 die("카톡 데이터에 없는 id입니다: " + video_id)

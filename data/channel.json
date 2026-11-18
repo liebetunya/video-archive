@@ -154,10 +154,12 @@
     "url": "https://youtu.be/ING7QjWQEXE",
     "date": "2026-11-14",
     "duration": "41:46",
-    "title": "261113금 공청기,가습기. 앞에5분 없음",
+    "title": "공청기,가습기_허일무강사(261113금)  앞에5분 없음😭",
     "category": "제품설명",
     "book": null,
-    "speakers": [],
+    "speakers": [
+      "허일무"
+    ],
     "auto_reason": "제품/건강강의 키워드(공청기)",
     "suggested_category": null
   },
@@ -166,132 +168,126 @@
     "url": "https://youtu.be/cZsjDe8M9m8",
     "date": "2026-11-14",
     "duration": "30:36",
-    "title": "261113금",
-    "category": "미분류",
-    "book": null,
+    "title": "불변의 법칙 229~253 (261113금)",
+    "category": "아침북미팅",
+    "book": "불변의 법칙",
     "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "아침북미팅"
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
   },
   {
     "id": "zwHr5FDjTpc",
     "url": "https://youtu.be/zwHr5FDjTpc",
     "date": "2026-11-14",
     "duration": "20:56",
-    "title": "261112목 중간에짤림",
-    "category": "미분류",
-    "book": null,
+    "title": "불변의 법칙 203~225 (261112목) 21분에 짤림😭",
+    "category": "아침북미팅",
+    "book": "불변의 법칙",
     "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "아침북미팅"
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
   },
   {
     "id": "cJGjttgJkyA",
     "url": "https://youtu.be/cJGjttgJkyA",
     "date": "2026-11-14",
     "duration": "31:28",
-    "title": "261111수",
-    "category": "미분류",
-    "book": null,
+    "title": "불변의 법칙 181~203 (261111수)",
+    "category": "아침북미팅",
+    "book": "불변의 법칙",
     "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "아침북미팅"
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
   },
   {
     "id": "oWO8gS61nD0",
     "url": "https://youtu.be/oWO8gS61nD0",
     "date": "2026-11-14",
     "duration": "1:06:26",
-    "title": "201110화",
-    "category": "미분류",
+    "title": "키성장_화목한9시_안희진리더 (261110화)",
+    "category": "화목한9시",
     "book": null,
-    "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "강의와미팅"
-  },
-  {
-    "id": "ak-Ipyf6QlE",
-    "url": "https://youtu.be/ak-Ipyf6QlE",
-    "date": "2026-11-14",
-    "duration": "1:13:13",
-    "title": "261111수",
-    "category": "미분류",
-    "book": null,
-    "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "강의와미팅"
+    "speakers": [
+      "안희진"
+    ],
+    "auto_reason": "제목에 화목한9시",
+    "suggested_category": null
   },
   {
     "id": "GAPMVYROETQ",
     "url": "https://youtu.be/GAPMVYROETQ",
     "date": "2026-11-14",
     "duration": "32:40",
-    "title": "261110화",
-    "category": "미분류",
-    "book": null,
+    "title": "불변의 법칙 163~179 (261110화)",
+    "category": "아침북미팅",
+    "book": "불변의 법칙",
     "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "아침북미팅"
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
   },
   {
     "id": "aaTcL8l9ZBg",
     "url": "https://youtu.be/aaTcL8l9ZBg",
     "date": "2026-11-14",
     "duration": "57:30",
-    "title": "261109월",
-    "category": "미분류",
+    "title": "레티놀_이제니부장(261109월)",
+    "category": "제품설명",
     "book": null,
-    "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "강의와미팅"
+    "speakers": [
+      "이제니"
+    ],
+    "auto_reason": "제품/건강강의 키워드(레티놀)",
+    "suggested_category": null
   },
   {
     "id": "nAi-fc6xyo4",
     "url": "https://youtu.be/nAi-fc6xyo4",
     "date": "2026-11-14",
     "duration": "29:54",
-    "title": "261109월",
-    "category": "미분류",
-    "book": null,
+    "title": "불변의 법칙 141~159 (261109월)",
+    "category": "아침북미팅",
+    "book": "불변의 법칙",
     "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "아침북미팅"
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
   },
   {
     "id": "6zMovp8Yg2g",
     "url": "https://youtu.be/6zMovp8Yg2g",
     "date": "2026-11-14",
     "duration": "59:31",
-    "title": "261106금",
-    "category": "미분류",
+    "title": "신장건강_김명하리더(261106금)",
+    "category": "강의와미팅",
     "book": null,
-    "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "강의와미팅"
+    "speakers": [
+      "김명하"
+    ],
+    "auto_reason": "나머지 강의·미팅",
+    "suggested_category": null
   },
   {
     "id": "utRwS9AWsts",
     "url": "https://youtu.be/utRwS9AWsts",
     "date": "2026-11-14",
     "duration": "29:47",
-    "title": "261106금",
-    "category": "미분류",
-    "book": null,
+    "title": "불변의 법칙 99~137 (261106금)",
+    "category": "아침북미팅",
+    "book": "불변의 법칙",
     "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "아침북미팅"
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
   },
   {
     "id": "4ly-SMGxdaI",
     "url": "https://youtu.be/4ly-SMGxdaI",
     "date": "2026-11-14",
     "duration": "32:11",
-    "title": "261105목",
-    "category": "미분류",
-    "book": null,
+    "title": "불변의법칙 85~95 (261105목)",
+    "category": "아침북미팅",
+    "book": "불변의 법칙",
     "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "아침북미팅"
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
   },
   {
     "id": "7euJn68IBN4",
@@ -3845,7 +3841,7 @@
     "url": "https://youtu.be/nof7UeI2eKs",
     "date": "2026-04-06",
     "duration": "1:01:10",
-    "title": "260406월 [박민수 원장] 뼈·근육·혈행 건강의 핵심 전략 ",
+    "title": "260406월 [박민수 원장] 뼈·근육·혈행 건강의 핵심 전략",
     "category": "강의와미팅",
     "book": null,
     "speakers": [

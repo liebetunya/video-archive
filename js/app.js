@@ -7,7 +7,8 @@
 
   var KAKAO_CATS = ["암웨이 관련", "일반 영상", "미분류"];
   var KAKAO_SUBS = ["제품설명", "사업·강의"];
-  var CHANNEL_CATS = ["아침북미팅", "화목한9시", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류", "코칭"];
+  var CHANNEL_CATS = ["박주희북텔링", "최현홍북텔링", "화목한9시", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류", "코칭"];
+  var BOOK_CHIP_CATS = ["박주희북텔링", "최현홍북텔링"];
 
   var KAKAO_MOVES = [
     { category: "암웨이 관련", subcategory: "제품설명", label: "암웨이 관련 · 제품설명" },
@@ -314,8 +315,12 @@
     return baseItems().map(viewOf).filter(function (item) { return matches(item, query); });
   }
 
+  function isBookChipCategory(category) {
+    return BOOK_CHIP_CATS.indexOf(category) !== -1;
+  }
+
   function bookOrder() {
-    return state.tab === "channel" && state.category === "아침북미팅" && state.sub !== "전체";
+    return state.tab === "channel" && isBookChipCategory(state.category) && state.sub !== "전체";
   }
 
   function compareItems(a, b) {
@@ -337,7 +342,7 @@
       list = list.filter(function (item) { return item.category !== "코칭"; });
     } else {
       list = list.filter(function (item) { return item.category === state.category; });
-      if (state.category === "아침북미팅" && state.sub !== "전체") {
+      if (isBookChipCategory(state.category) && state.sub !== "전체") {
         list = list.filter(function (item) { return item.bookName === state.sub; });
       }
     }
@@ -433,10 +438,10 @@
     els.chips.scrollLeft = chipScroll;
 
     var showAmway = state.tab === "kakao" && state.category === "암웨이 관련";
-    var showBooks = state.tab === "channel" && state.category === "아침북미팅";
+    var showBooks = state.tab === "channel" && isBookChipCategory(state.category);
     els.subchips.hidden = !(showAmway || showBooks);
     els.subchips.classList.toggle("bookchips", showBooks);
-    els.subchips.setAttribute("aria-label", showBooks ? "아침북미팅 책" : "암웨이 하위 분류");
+    els.subchips.setAttribute("aria-label", showBooks ? state.category + " 책" : "암웨이 하위 분류");
     if (!showAmway && !showBooks) return;
     var subFrag = document.createDocumentFragment();
     if (showAmway) {
@@ -451,7 +456,7 @@
         }, false));
       });
     } else {
-      var morning = items.filter(function (item) { return item.category === "아침북미팅"; });
+      var morning = items.filter(function (item) { return item.category === state.category; });
       var bookCounts = countBy(morning, "bookName");
       var latest = Object.create(null);
       morning.forEach(function (item) {

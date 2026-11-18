@@ -50,7 +50,8 @@ from pathlib import Path
 KAKAO_CATEGORIES = {"암웨이 관련", "일반 영상", "미분류"}
 KAKAO_SUBS = {"제품설명", "사업·강의"}
 CHANNEL_CATEGORIES = {
-    "아침북미팅",
+    "박주희북텔링",
+    "최현홍북텔링",
     "화목한9시",
     "제품설명",
     "박주희",

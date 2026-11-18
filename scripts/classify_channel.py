@@ -4,7 +4,12 @@
 
 제목에 '화목한9시' 또는 '화목한 9시'가 있으면(사이의 공백은 몇 칸이든) category를
 화목한9시로 바꿉니다. 데이터 파일을 갈아 끼운 뒤에 이 스크립트를 한 번 실행하면
-같은 규칙이 다시 적용됩니다. 이미 그 분류인 영상은 그대로 둡니다.
+같은 규칙이 다시 적용됩니다. 이미 그 분류인 영상(손으로 옮긴 `user: 화목한9시`
+포함)은 그대로 둡니다.
+
+채널 분류 순서는 박주희북텔링, 최현홍북텔링, 화목한9시, 제품설명, 박주희, 최현홍,
+강의와미팅, 미분류, 코칭입니다. 이 스크립트는 화목한9시만 다루고, 북텔링 두 분류는
+채널 데이터(data/channel.json)를 만들 때 나눕니다.
 
     python3 scripts/classify_channel.py data/channel.json
     python3 scripts/classify_channel.py data/channel.json --dry-run

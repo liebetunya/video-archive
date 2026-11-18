@@ -50,7 +50,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-KAKAO_CATEGORIES = {"암웨이 관련", "일반 영상", "미분류"}
+KAKAO_CATEGORIES = {"암웨이 관련", "일반 영상", "소비자에게", "미분류"}
 KAKAO_SUBS = {"제품설명", "사업·강의"}
 CHANNEL_CATEGORIES = {
     "박주희북텔링",

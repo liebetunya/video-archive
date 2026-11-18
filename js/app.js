@@ -5,7 +5,7 @@
   var STORAGE_KEY = "eunjo-archive-overrides-v1";
   var EXPORT_KIND = "eunjo-video-overrides";
 
-  var KAKAO_CATS = ["암웨이 관련", "일반 영상", "미분류"];
+  var KAKAO_CATS = ["암웨이 관련", "일반 영상", "소비자에게", "미분류"];
   var KAKAO_SUBS = ["제품설명", "사업·강의"];
   var CHANNEL_CATS = ["박주희북텔링", "최현홍북텔링", "화목한9시", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류", "코칭"];
   var BOOK_CHIP_CATS = ["박주희북텔링"];
@@ -14,6 +14,7 @@
     { category: "암웨이 관련", subcategory: "제품설명", label: "암웨이 관련 · 제품설명" },
     { category: "암웨이 관련", subcategory: "사업·강의", label: "암웨이 관련 · 사업·강의" },
     { category: "일반 영상", subcategory: null, label: "일반 영상" },
+    { category: "소비자에게", subcategory: null, label: "소비자에게" },
     { category: "미분류", subcategory: null, label: "미분류" },
   ];
   var CHANNEL_MOVES = CHANNEL_CATS.map(function (category) {

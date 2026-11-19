@@ -316,6 +316,31 @@
     "suggested_category": null
   },
   {
+    "id": "TCGsqCEMM9I",
+    "url": "https://youtu.be/TCGsqCEMM9I",
+    "date": "2026-11-12",
+    "duration": "28:32",
+    "title": "불변의 법칙 203~225 (261112목) · 다른 분 녹화 완전본",
+    "category": "박주희북텔링",
+    "book": "불변의 법칙",
+    "speakers": [],
+    "auto_reason": "user: 짤림본 교체",
+    "suggested_category": null
+  },
+  {
+    "id": "UeP0HNnifMg",
+    "url": "https://youtu.be/UeP0HNnifMg",
+    "date": "2026-11-12",
+    "duration": "46:16",
+    "title": "20261112 화목한 Day",
+    "channel": "GOYO",
+    "category": "화목한9시",
+    "book": null,
+    "speakers": [],
+    "auto_reason": "user: 카톡방 다른 분 녹화본, 빈 날짜 보충",
+    "suggested_category": null
+  },
+  {
     "id": "7euJn68IBN4",
     "url": "https://youtu.be/7euJn68IBN4",
     "date": "2026-11-05",
@@ -380,6 +405,21 @@
     "suggested_category": null
   },
   {
+    "id": "yYTn1o1psng",
+    "url": "https://youtu.be/yYTn1o1psng",
+    "date": "2026-11-03",
+    "duration": "1:04:38",
+    "title": "성조숙증(안희진리더님)",
+    "channel": "최복결",
+    "category": "화목한9시",
+    "book": null,
+    "speakers": [
+      "안희진"
+    ],
+    "auto_reason": "user: 카톡방 다른 분 녹화본, 빈 날짜 보충",
+    "suggested_category": null
+  },
+  {
     "id": "YK_pD-EV9xk",
     "url": "https://youtu.be/YK_pD-EV9xk",
     "date": "2026-11-02",
@@ -413,6 +453,21 @@
     "book": "열정에 기름붓기",
     "speakers": [],
     "auto_reason": "책이름(열정에 기름붓기)",
+    "suggested_category": null
+  },
+  {
+    "id": "IW6iphi0uJE",
+    "url": "https://youtu.be/IW6iphi0uJE",
+    "date": "2026-10-29",
+    "duration": "1:00:06",
+    "title": "퀸요리(버섯솥밥,애플크럼블)-박정은리더님",
+    "channel": "최복결",
+    "category": "화목한9시",
+    "book": null,
+    "speakers": [
+      "박정은"
+    ],
+    "auto_reason": "user: 카톡방 다른 분 녹화본, 빈 날짜 보충",
     "suggested_category": null
   },
   {
@@ -1006,6 +1061,21 @@
     "suggested_category": null
   },
   {
+    "id": "Uu14jONjbw4",
+    "url": "https://youtu.be/Uu14jONjbw4",
+    "date": "2026-09-29",
+    "duration": "1:11:10",
+    "title": "260929 화목한 9시 비긴 리셋 디톡스",
+    "channel": "jiin nam",
+    "category": "화목한9시",
+    "book": null,
+    "speakers": [
+      "남지인"
+    ],
+    "auto_reason": "user: 카톡방 다른 분 녹화본, 빈 날짜 보충",
+    "suggested_category": null
+  },
+  {
     "id": "Bwc9buwn_qg",
     "url": "https://youtu.be/Bwc9buwn_qg",
     "date": "2026-09-28",
@@ -1253,6 +1323,21 @@
     "book": "아비투스",
     "speakers": [],
     "auto_reason": "책이름(아비투스)",
+    "suggested_category": null
+  },
+  {
+    "id": "J_tg0WunUV8",
+    "url": "https://youtu.be/J_tg0WunUV8",
+    "date": "2026-09-08",
+    "duration": "1:04:16",
+    "title": "260908 더마아키텍트 마사지법",
+    "channel": "jiin nam",
+    "category": "화목한9시",
+    "book": null,
+    "speakers": [
+      "남지인"
+    ],
+    "auto_reason": "user: 카톡방 다른 분 녹화본, 빈 날짜 보충",
     "suggested_category": null
   },
   {
@@ -2650,6 +2735,18 @@
     "suggested_category": null
   },
   {
+    "id": "98AL2WbYnCE",
+    "url": "https://youtu.be/98AL2WbYnCE",
+    "date": "2026-06-15",
+    "duration": "32:35",
+    "title": "최소한의 경제공부 181~189 (260615월) · 다른 분 녹화본",
+    "category": "박주희북텔링",
+    "book": "최소한의 경제공부",
+    "speakers": [],
+    "auto_reason": "user: 누락본 보충",
+    "suggested_category": null
+  },
+  {
     "id": "CZr74kRtpfA",
     "url": "https://youtu.be/CZr74kRtpfA",
     "date": "2026-06-12",
@@ -3224,6 +3321,18 @@
     "book": null,
     "speakers": [],
     "auto_reason": "제품/건강강의 키워드(7일디톡스)",
+    "suggested_category": null
+  },
+  {
+    "id": "Xv3k17692ow",
+    "url": "https://youtu.be/Xv3k17692ow",
+    "date": "2026-05-14",
+    "duration": "28:59",
+    "title": "리더는 AI에게 질문하지 않는다 (260514목) · 다른 분 녹화본",
+    "category": "박주희북텔링",
+    "book": "리더는 AI에게 질문하지 않는다",
+    "speakers": [],
+    "auto_reason": "user: 누락본 보충",
     "suggested_category": null
   },
   {
@@ -5615,42 +5724,6 @@
     "book": null,
     "speakers": [],
     "auto_reason": "제품/건강강의 키워드(마이웰니스랩)",
-    "suggested_category": null
-  },
-  {
-    "id": "98AL2WbYnCE",
-    "url": "https://youtu.be/98AL2WbYnCE",
-    "date": "2026-06-15",
-    "duration": "32:35",
-    "title": "최소한의 경제공부 181~189 (260615월) · 다른 분 녹화본",
-    "category": "박주희북텔링",
-    "book": "최소한의 경제공부",
-    "speakers": [],
-    "auto_reason": "user: 누락본 보충",
-    "suggested_category": null
-  },
-  {
-    "id": "Xv3k17692ow",
-    "url": "https://youtu.be/Xv3k17692ow",
-    "date": "2026-05-14",
-    "duration": "28:59",
-    "title": "리더는 AI에게 질문하지 않는다 (260514목) · 다른 분 녹화본",
-    "category": "박주희북텔링",
-    "book": "리더는 AI에게 질문하지 않는다",
-    "speakers": [],
-    "auto_reason": "user: 누락본 보충",
-    "suggested_category": null
-  },
-  {
-    "id": "TCGsqCEMM9I",
-    "url": "https://youtu.be/TCGsqCEMM9I",
-    "date": "2026-11-12",
-    "duration": "28:32",
-    "title": "불변의 법칙 203~225 (261112목) · 다른 분 녹화 완전본",
-    "category": "박주희북텔링",
-    "book": "불변의 법칙",
-    "speakers": [],
-    "auto_reason": "user: 짤림본 교체",
     "suggested_category": null
   }
 ]

@@ -8,7 +8,7 @@
   var KAKAO_CATS = ["암웨이 관련", "일반 영상", "미분류"];
   var KAKAO_VALID_CATS = KAKAO_CATS.concat(["소비자에게"]);
   var KAKAO_SUBS = ["제품설명", "사업·강의"];
-  var CHANNEL_CATS = ["박주희북텔링", "최현홍북텔링", "화목한9시", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류", "코칭"];
+  var CHANNEL_CATS = ["박주희북텔링", "최현홍북텔링", "화목한9시", "각오미팅", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류", "코칭"];
   var BOOK_CHIP_CATS = ["박주희북텔링"];
 
   var KAKAO_MOVES = [

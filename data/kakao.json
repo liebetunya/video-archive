@@ -5,14 +5,14 @@
     "built_from": "metadata + captions + masked reviews; descriptions deferred"
   },
   "counts": {
-    "items": 285,
+    "items": 286,
     "category": {
-      "암웨이 관련": 213,
+      "암웨이 관련": 214,
       "일반 영상": 51,
       "미분류": 21
     },
     "subcategory": {
-      "사업·강의": 200,
+      "사업·강의": 201,
       "(none)": 72,
       "제품설명": 13
     },
@@ -9615,6 +9615,23 @@
           "time": "2026-11-21T08:26:00"
         }
       ]
+    },
+    {
+      "id": "xWDKVfJyw5A",
+      "url": "https://www.youtube.com/watch?v=xWDKVfJyw5A",
+      "type": "watch",
+      "post_date": "2026-11-23",
+      "title": "무빙업 방중하리더님",
+      "channel": "더불업 홍반장",
+      "duration": 4016,
+      "upload_date": "2026-11-22",
+      "caption": null,
+      "description": "더불업 홍반장 채널에 올라온 무빙업 강의로, 방중하 리더님의 강연을 담은 영상입니다.",
+      "category": "암웨이 관련",
+      "subcategory": "사업·강의",
+      "suggested_category": null,
+      "tags": [],
+      "reviews": []
     },
     {
       "id": "KRPF-l_XrGo",

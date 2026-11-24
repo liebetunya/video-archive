@@ -17,7 +17,7 @@
       "제품설명": 13
     },
     "metadata_failures": 0,
-    "with_reviews": 248
+    "with_reviews": 249
   },
   "metadata_failures": [],
   "videos": [
@@ -9654,7 +9654,13 @@
       "subcategory": "사업·강의",
       "suggested_category": null,
       "tags": [],
-      "reviews": []
+      "reviews": [
+        {
+          "author_masked": "이한O님",
+          "text_masked": "암웨이는 자본투자없는 부동산\n기본적으로 멀티를 하고 있는 시대.\n\n내가 암웨이를 함으로써 아이에게 더 넓은 세상을 보여줄 수 있다니...\n\n뜻으로 자립한 핵개인들의 모임. 홀로서기 연습이 필요한 시대. 암웨이는 공부 공동체.\n\n앞으로는 글쓰기 연습이 필요하다. 역시 암웨이 안에서 자란 아이들은 넘 잘 크네요. 내가 언어로 가르치는 것보다도 훨씬 잘 자랄 수 있는! 그리고 100프로 지원해줄 수 있는 부모.",
+          "time": "2026-11-24T23:14:00"
+        }
+      ]
     },
     {
       "id": "KRPF-l_XrGo",

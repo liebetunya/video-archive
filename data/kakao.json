@@ -5,14 +5,14 @@
     "built_from": "metadata + captions + masked reviews; descriptions deferred"
   },
   "counts": {
-    "items": 286,
+    "items": 287,
     "category": {
-      "암웨이 관련": 214,
+      "암웨이 관련": 215,
       "일반 영상": 51,
       "미분류": 21
     },
     "subcategory": {
-      "사업·강의": 201,
+      "사업·강의": 202,
       "(none)": 72,
       "제품설명": 13
     },
@@ -9638,6 +9638,23 @@
           "time": "2026-11-23T21:31:00"
         }
       ]
+    },
+    {
+      "id": "sD_W8nddjhE",
+      "url": "https://www.youtube.com/watch?v=sD_W8nddjhE",
+      "type": "watch",
+      "post_date": "2026-11-24",
+      "title": "간호사 출신 한의사 아내의 반전 : 독박육아 극복하고 9년 만에 10억 자산 가치 연금 수입 만든 비결_강은희리더님",
+      "channel": "건강부자 길잡이",
+      "duration": 3998,
+      "upload_date": "2026-10-22",
+      "caption": null,
+      "description": "건강부자 길잡이 채널에 올라온 강의로, 강은희 리더님의 강연을 담은 영상입니다.",
+      "category": "암웨이 관련",
+      "subcategory": "사업·강의",
+      "suggested_category": null,
+      "tags": [],
+      "reviews": []
     },
     {
       "id": "KRPF-l_XrGo",

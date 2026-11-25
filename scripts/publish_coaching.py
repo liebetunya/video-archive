@@ -22,6 +22,7 @@ from collections import Counter
 from pathlib import Path
 
 from classify_coaching import SUBS, classify, coaching_subcategory, configure_stdio
+from coaching_exceptions import excluded_from_coaching_page, NOT_COACHING_PAGE
 
 
 def fail(message: str) -> None:
@@ -63,6 +64,26 @@ def main() -> None:
         fail("암호문 경로에는 쓸 수 없습니다.")
 
     container, videos = load_videos(args.coaching)
+    kept = []
+    skipped = []
+    for item in videos:
+        if not isinstance(item, dict):
+            kept.append(item)
+            continue
+        dest = excluded_from_coaching_page(item.get("id"))
+        if dest:
+            skipped.append((item.get("id"), dest))
+            continue
+        kept.append(item)
+    if skipped:
+        print("코칭 페이지 제외 " + str(len(skipped)) + "개 (직찍 강의에 둡니다)")
+        for vid, dest in skipped:
+            print("- " + str(vid) + " → " + dest)
+        videos[:] = kept
+        if isinstance(container, list):
+            container[:] = kept
+        else:
+            container["videos"] = kept
     changed = classify(videos)
     counts = Counter(item.get("subcategory") if isinstance(item, dict) else None for item in videos)
     print("코칭 영상 " + str(len(videos)) + "개")

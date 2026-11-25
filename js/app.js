@@ -4,6 +4,37 @@
   var PAGE = 24;
   var STORAGE_KEY = "eunjo-archive-overrides-v1";
   var EXPORT_KIND = "eunjo-video-overrides";
+  var CLEAR_FLAG = "eunjo-overrides-cleared-20261126";
+  var KNOWN_APPLIED_KEYS = {
+    "channel:KDQqn9WWbKI": 1,
+    "channel:ocIyVn9GzqM": 1,
+    "channel:tLKACOqr9ok": 1,
+    "coaching:2mEdzLGyBI4": 1,
+    "coaching:7sxFu9Say5I": 1,
+    "coaching:CA6AqULPW4c": 1,
+    "coaching:a1QRlReXPPM": 1,
+    "kakao:-iXo8iObNbI": 1,
+    "kakao:3BAvm_Y1jwE": 1,
+    "kakao:41VH0x1dNTI": 1,
+    "kakao:4Covxu8EEBY": 1,
+    "kakao:55lr45EXn7s": 1,
+    "kakao:7B4Hsqb00No": 1,
+    "kakao:7sDVtyxzdqU": 1,
+    "kakao:CHauJ9hlDEY": 1,
+    "kakao:D-1hk6IO2kc": 1,
+    "kakao:DOq9fSB2uUg": 1,
+    "kakao:HdU_iQN215w": 1,
+    "kakao:JANwp5oP2JE": 1,
+    "kakao:LMywVwOVAX8": 1,
+    "kakao:LQjy7Uqiy4g": 1,
+    "kakao:Lni3gK2BKII": 1,
+    "kakao:MpL0MRjQJ7A": 1,
+    "kakao:PLYXmWAYugIVA": 1,
+    "kakao:Z2SxP9MvcGA": 1,
+    "kakao:bDV6nDmUUuk": 1,
+    "kakao:vooeMZqr-Bw": 1,
+    "kakao:wukgzklOBWw": 1
+  };
   var PAGE_MODE = document.documentElement.getAttribute("data-page") === "coaching" ? "coaching" : "main";
   var DATA_ROOT = (document.documentElement.getAttribute("data-root") || ".").replace(/\/?$/, "/");
 
@@ -531,20 +562,17 @@
     return null;
   }
 
+  function normDesc(text) {
+    return String(text || "").replace(/\s+/g, " ").trim();
+  }
+
   function overrideAlreadyApplied(entry, item) {
     if (!item || entry.category !== item.category) return false;
     var wantSub = entry.subcategory || null;
     var gotSub = item.subcategory || null;
-    if (wantSub) {
-      if (wantSub !== gotSub) return false;
-    } else if (entry.category === "코칭") {
-      if (COACH_SUBS.indexOf(gotSub) === -1) return false;
-    } else if (gotSub) {
-      return false;
-    }
-    if (hasOwn(entry, "description")) {
-      if (String(entry.description || "").trim() !== (item.description || "")) return false;
-    }
+    if (wantSub && wantSub !== gotSub) return false;
+    if (!wantSub && entry.category === "코칭" && COACH_SUBS.indexOf(gotSub) === -1) return false;
+    if (hasOwn(entry, "description") && normDesc(entry.description) !== normDesc(item.description)) return false;
     return true;
   }
 
@@ -562,6 +590,38 @@
     if (!removed) return 0;
     state.overrides = kept;
     saveOverrides();
+    return removed;
+  }
+
+  function markOverridesCleared() {
+    try { localStorage.setItem(CLEAR_FLAG, "1"); } catch (error) { /* ignore */ }
+  }
+
+  function oneTimeClearKnownApplied() {
+    try {
+      if (localStorage.getItem(CLEAR_FLAG)) return 0;
+    } catch (error) {
+      return 0;
+    }
+    var keys = Object.keys(state.overrides);
+    if (!keys.length) {
+      markOverridesCleared();
+      return 0;
+    }
+    var kept = {};
+    var removed = 0;
+    keys.forEach(function (key) {
+      var entry = state.overrides[key];
+      var item = findRawForOverride(entry);
+      if (KNOWN_APPLIED_KEYS[key] && item && entry && item.category === entry.category) {
+        removed += 1;
+        return;
+      }
+      kept[key] = entry;
+    });
+    state.overrides = kept;
+    if (removed) saveOverrides();
+    markOverridesCleared();
     return removed;
   }
 
@@ -1315,7 +1375,7 @@
         state.coaching = await loadVideoFile("data/coaching.json", mapCoaching);
         state.category = "코칭";
         await ensurePruneData();
-        var prunedCoach = pruneAppliedOverrides();
+        var prunedCoach = oneTimeClearKnownApplied() + pruneAppliedOverrides();
         state.loading = false;
         render();
         if (prunedCoach) toast("저장소에 이미 반영된 수정 " + prunedCoach + "건을 이 브라우저에서 지웠어요.");
@@ -1344,7 +1404,7 @@
       }).filter(function (item) { return item.id; });
       state.eagledream = eagleVideos.map(normalizeEagle).filter(function (item) { return item.id; });
       await ensurePruneData();
-      var pruned = pruneAppliedOverrides();
+      var pruned = oneTimeClearKnownApplied() + pruneAppliedOverrides();
       state.loading = false;
       render();
       if (pruned) toast("저장소에 이미 반영된 수정 " + pruned + "건을 이 브라우저에서 지웠어요.");

@@ -5,15 +5,15 @@
     "built_from": "metadata + captions + masked reviews; descriptions deferred"
   },
   "counts": {
-    "items": 287,
+    "items": 288,
     "category": {
       "암웨이 관련": 215,
-      "일반 영상": 51,
+      "일반 영상": 52,
       "미분류": 21
     },
     "subcategory": {
       "사업·강의": 202,
-      "(none)": 72,
+      "(none)": 73,
       "제품설명": 13
     },
     "metadata_failures": 0,
@@ -9661,6 +9661,23 @@
           "time": "2026-11-24T23:14:00"
         }
       ]
+    },
+    {
+      "id": "9WS83SgeLSw",
+      "url": "https://www.youtube.com/watch?v=9WS83SgeLSw",
+      "type": "watch",
+      "post_date": "2026-11-25",
+      "title": "나의 몸값을 10배 띄워 줄 결정적 차이, 대기업 브랜드 총괄이 밝히는 4가지 방법 | 노희영 브랜드 전략가, 히노컨설팅펌 대표 | 몸값올리기 커리어 성공법칙 | 세바시 2162회",
+      "channel": "세바시 강연 Sebasi Talk",
+      "duration": 1580,
+      "upload_date": "2026-11-18",
+      "caption": null,
+      "description": "",
+      "category": "일반 영상",
+      "subcategory": null,
+      "suggested_category": null,
+      "tags": [],
+      "reviews": []
     },
     {
       "id": "KRPF-l_XrGo",

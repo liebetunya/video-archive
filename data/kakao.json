@@ -18,7 +18,7 @@
       "제품설명": 14
     },
     "metadata_failures": 0,
-    "with_reviews": 250
+    "with_reviews": 252
   },
   "metadata_failures": [],
   "videos": [
@@ -9678,7 +9678,13 @@
       "subcategory": null,
       "suggested_category": null,
       "tags": [],
-      "reviews": []
+      "reviews": [
+        {
+          "author_masked": "이한O님",
+          "text_masked": "잘하는 일 먼저 시작해야 한다. 그걸로 퍼포먼스를 보여줘야 그들의 인정을 받을 수 있다. 나를 파는 방법을 연구해야 한다. 퍼스널브랜딩의 대상과 목적을 분명히 해야 한다. 내가 지켜야할 것. 남이 나를 좋아하는 것, 남들과 비교했을 때 내가 우위를 가진 작은 것부터 적어보자. 그 다음 고쳐야하는 것을 써봐라. 이길 수 있을 때 싸운다. 좋은 팔로워가 좋은 리더가 될 수 있다.",
+          "time": "2026-11-26T07:06:00"
+        }
+      ]
     },
     {
       "id": "IQi8XXEj4fE",
@@ -9695,7 +9701,13 @@
       "subcategory": null,
       "suggested_category": null,
       "tags": [],
-      "reviews": []
+      "reviews": [
+        {
+          "author_masked": "이한O님",
+          "text_masked": "기하급수적으로 ai가 발전하고 있다. 이제 지식과 기술은 덜 중요해졌다. 최대한 많은 경험을 해야 새로운 스토리를 만들어내는 인간이 될 수 있다. 앞으로는 정답이 없는 일을 해야 한다. 그리고 다른 사람과 함께하는 일을 해야 한다. 나와 나보다 ai를 더 잘 쓰는 인간들과의 경쟁을 하는 시대가 될것이다. 지식이 많은 것은 경쟁력이 없다. 자신만의 고유성, 스토리가 경쟁력이 있다.",
+          "time": "2026-11-26T07:06:00"
+        }
+      ]
     },
     {
       "id": "KRPF-l_XrGo",

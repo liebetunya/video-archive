@@ -4,14 +4,15 @@
     "channel_url": "https://www.youtube.com/@official_eagledream1919",
     "channel_id": "UCQbrzOnApbuOAyc4oXo2DyQ",
     "cutoff": "2024-11-25",
-    "built_from": "채널 동영상·라이브 탭과 공개 재생목록을 yt-dlp로 수집. Shorts 탭 없음. 제목에 Q&A/QnA, Nuts & Bolts/넛츠 앤 볼츠, 10-CORE/10CORE/10 CORE(텐코아)가 있는 영상만 포함. 업로드일 2024-11-25 이후, 최신순."
+    "built_from": "채널 동영상·라이브 탭과 공개 재생목록을 yt-dlp로 수집. Shorts 탭 없음. 제목에 Q&A/QnA, Nuts & Bolts/넛츠 앤 볼츠, 10-CORE/10CORE/10 CORE(텐코아)가 있는 영상만 포함. 업로드일 2024-11-25 이후, 최신순 박주희는 기간 제한 없이 제목·설명란에서 이름을 확인한 영상을 포함."
   },
   "counts": {
-    "items": 95,
+    "items": 100,
     "subcategory": {
       "Q&A": 24,
       "넛츠 앤 볼츠": 47,
-      "텐코아": 24
+      "텐코아": 24,
+      "박주희": 5
     }
   },
   "videos": [
@@ -1435,6 +1436,81 @@
       "upload_date": "2024-12-15",
       "category": "이글드림",
       "subcategory": "Q&A",
+      "suggested_category": null,
+      "tags": [],
+      "description": "",
+      "caption": null
+    },
+    {
+      "id": "MGQZmPAP8Yw",
+      "url": "https://www.youtube.com/watch?v=MGQZmPAP8Yw",
+      "type": "watch",
+      "title": "24.6.25 오후 FOM l DIA F.D.DIA 박주희",
+      "channel": "OFFICIAL_ EAGLEDREAM",
+      "duration": 4643,
+      "upload_date": "2024-06-25",
+      "category": "이글드림",
+      "subcategory": "박주희",
+      "suggested_category": null,
+      "tags": [],
+      "description": "",
+      "caption": null
+    },
+    {
+      "id": "W2GV3RTX1ME",
+      "url": "https://www.youtube.com/watch?v=W2GV3RTX1ME",
+      "type": "watch",
+      "title": "22.11.1 오후 OM l  F.D.DIA 박주희 리더 \"라이프테크\"",
+      "channel": "OFFICIAL_ EAGLEDREAM",
+      "duration": 3323,
+      "upload_date": "2022-11-01",
+      "category": "이글드림",
+      "subcategory": "박주희",
+      "suggested_category": null,
+      "tags": [],
+      "description": "",
+      "caption": null
+    },
+    {
+      "id": "40_hDA4LRhc",
+      "url": "https://www.youtube.com/watch?v=40_hDA4LRhc",
+      "type": "watch",
+      "title": "22.1.4 오후 OM l D.DIA 이동훈&박주희 리더 \"2022년 변화의시대 앞서갈것인가?따라갈것인가?뒤쳐질것인가?\"",
+      "channel": "OFFICIAL_ EAGLEDREAM",
+      "duration": 3057,
+      "upload_date": "2022-01-04",
+      "category": "이글드림",
+      "subcategory": "박주희",
+      "suggested_category": null,
+      "tags": [],
+      "description": "",
+      "caption": null
+    },
+    {
+      "id": "ix12VuaYkvo",
+      "url": "https://www.youtube.com/watch?v=ix12VuaYkvo",
+      "type": "watch",
+      "title": "20.07.07 오후 Talk Show l 뭐시든지 물어보살",
+      "channel": "OFFICIAL_ EAGLEDREAM",
+      "duration": 2330,
+      "upload_date": "2020-07-07",
+      "category": "이글드림",
+      "subcategory": "박주희",
+      "suggested_category": null,
+      "tags": [],
+      "description": "",
+      "caption": null
+    },
+    {
+      "id": "BA3uqhS8mO4",
+      "url": "https://www.youtube.com/watch?v=BA3uqhS8mO4",
+      "type": "watch",
+      "title": "20.03.10 O.M 박주희 Double Diamond(\"나다움이 블루오션이다\")",
+      "channel": "OFFICIAL_ EAGLEDREAM",
+      "duration": 2586,
+      "upload_date": "2020-03-12",
+      "category": "이글드림",
+      "subcategory": "박주희",
       "suggested_category": null,
       "tags": [],
       "description": "",

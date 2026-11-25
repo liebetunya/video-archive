@@ -10,6 +10,7 @@
   var KAKAO_SUBS = ["제품설명", "사업·강의"];
   var CHANNEL_CATS = ["박주희북텔링", "최현홍북텔링", "화목한9시", "각오미팅", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류", "코칭"];
   var BOOK_CHIP_CATS = ["박주희북텔링"];
+  var EAGLE_SUBS = ["Q&A", "넛츠 앤 볼츠", "텐코아"];
 
   var KAKAO_MOVES = [
     { category: "암웨이 관련", subcategory: "제품설명", label: "암웨이 관련 · 제품설명" },
@@ -21,6 +22,9 @@
   var CHANNEL_MOVES = CHANNEL_CATS.map(function (category) {
     return { category: category, subcategory: null, label: category };
   });
+  var EAGLE_MOVES = EAGLE_SUBS.map(function (sub) {
+    return { category: "이글드림", subcategory: sub, label: sub };
+  });
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -29,6 +33,7 @@
     tabKakao: $("tab-kakao"),
     tabChannel: $("tab-channel"),
     tabConsumer: $("tab-consumer"),
+    tabEagledream: $("tab-eagledream"),
     q: $("q"),
     clearQ: $("clear-q"),
     chips: $("chips"),
@@ -78,6 +83,7 @@
     overrides: loadOverrides(),
     kakao: [],
     channel: [],
+    eagledream: [],
     coaching: [],
     coachingOpen: false,
     loading: true,
@@ -268,6 +274,32 @@
     });
   }
 
+  function normalizeEagle(raw) {
+    return withSearch({
+      source: "eagledream",
+      id: String(raw.id || "").trim(),
+      url: raw.url || "",
+      type: raw.type || "watch",
+      date: raw.upload_date || raw.date || "",
+      recommendLabel: "",
+      playlistOrder: typeof raw.playlist_order === "number" ? raw.playlist_order : null,
+      title: raw.title || "(제목 없음)",
+      channel: raw.channel || "",
+      duration: formatDuration(raw.duration),
+      caption: typeof raw.caption === "string" ? raw.caption : "",
+      description: typeof raw.description === "string" ? raw.description.trim() : "",
+      category: raw.category || "이글드림",
+      subcategory: raw.subcategory || null,
+      suggested: raw.suggested_category || "",
+      tags: stringList(raw.tags),
+      book: raw.book || "",
+      speakers: stringList(raw.speakers),
+      reviews: [],
+      incomplete: raw.metadata_incomplete === true,
+      overridden: false,
+    });
+  }
+
   function loadOverrides() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -413,7 +445,7 @@
   }
 
   function findRaw(key) {
-    var pools = [state.kakao, state.channel, state.coaching];
+    var pools = [state.kakao, state.channel, state.eagledream, state.coaching];
     for (var i = 0; i < pools.length; i += 1) {
       for (var j = 0; j < pools[i].length; j += 1) {
         if (keyOf(pools[i][j]) === key) return pools[i][j];
@@ -435,6 +467,7 @@
   }
 
   function baseItems() {
+    if (state.tab === "eagledream") return state.eagledream;
     if (state.tab === "kakao" || state.tab === "consumer") return state.kakao;
     return state.coachingOpen ? state.channel.concat(state.coaching) : state.channel;
   }
@@ -473,7 +506,11 @@
 
   function filtered(items) {
     var list = items;
-    if (state.tab === "consumer") {
+    if (state.tab === "eagledream") {
+      if (state.sub !== "전체") {
+        list = list.filter(function (item) { return item.subcategory === state.sub; });
+      }
+    } else if (state.tab === "consumer") {
       list = list.filter(isConsumerItem);
     } else if (state.tab === "kakao") {
       list = list.filter(function (item) { return !isConsumerItem(item); });
@@ -502,6 +539,7 @@
   }
 
   function currentMoves() {
+    if (state.tab === "eagledream") return EAGLE_MOVES;
     return state.tab === "channel" ? CHANNEL_MOVES : KAKAO_MOVES;
   }
 
@@ -554,6 +592,25 @@
   }
 
   function renderChips(items) {
+    if (state.tab === "eagledream") {
+      els.chips.hidden = false;
+      var chipScroll = els.chips.scrollLeft;
+      var counts = countBy(items, "subcategory");
+      var frag = document.createDocumentFragment();
+      frag.appendChild(chipButton("전체", state.sub === "전체", items.length, function () {
+        chooseSub("전체");
+      }, false));
+      EAGLE_SUBS.forEach(function (sub) {
+        frag.appendChild(chipButton(sub, state.sub === sub, counts[sub] || 0, function () {
+          chooseSub(sub);
+        }, false));
+      });
+      els.chips.replaceChildren(frag);
+      els.chips.scrollLeft = chipScroll;
+      els.subchips.hidden = true;
+      els.subchips.replaceChildren();
+      return;
+    }
     if (state.tab === "consumer") {
       els.chips.hidden = true;
       els.subchips.hidden = true;
@@ -651,6 +708,7 @@
 
   function categoryLabel(item) {
     if (item.source === "kakao" && item.category === "암웨이 관련" && item.subcategory) return item.subcategory;
+    if (item.source === "eagledream" && item.subcategory) return item.subcategory;
     return item.category || "미분류";
   }
 
@@ -861,6 +919,7 @@
     els.tabKakao.setAttribute("aria-selected", state.tab === "kakao" ? "true" : "false");
     els.tabChannel.setAttribute("aria-selected", state.tab === "channel" ? "true" : "false");
     els.tabConsumer.setAttribute("aria-selected", state.tab === "consumer" ? "true" : "false");
+    els.tabEagledream.setAttribute("aria-selected", state.tab === "eagledream" ? "true" : "false");
     els.clearQ.hidden = !state.query;
 
     var matched = searched();
@@ -1014,6 +1073,9 @@
     if (entry.source === "channel" || entry.source === "coaching") {
       return CHANNEL_CATS.indexOf(entry.category) !== -1;
     }
+    if (entry.source === "eagledream") {
+      return entry.category === "이글드림" && EAGLE_SUBS.indexOf(entry.subcategory) !== -1;
+    }
     return false;
   }
 
@@ -1031,7 +1093,7 @@
         source: entry.source,
         id: entry.id,
         category: entry.category,
-        subcategory: (entry.source === "kakao" || entry.source === "playlist") && entry.category === "암웨이 관련" ? entry.subcategory : null,
+        subcategory: ((entry.source === "kakao" || entry.source === "playlist") && entry.category === "암웨이 관련") || entry.source === "eagledream" ? entry.subcategory : null,
       };
       if (hasOwn(entry, "description")) next[key].description = entry.description;
     });
@@ -1105,6 +1167,7 @@
   els.tabKakao.addEventListener("click", function () { setTab("kakao"); });
   els.tabChannel.addEventListener("click", function () { setTab("channel"); });
   els.tabConsumer.addEventListener("click", function () { setTab("consumer"); });
+  els.tabEagledream.addEventListener("click", function () { setTab("eagledream"); });
   function syncSearchPadding() {
     els.q.parentElement.classList.toggle("has-value", els.q.value.length > 0);
   }
@@ -1216,17 +1279,21 @@
       var responses = await Promise.all([
         fetch(new URL("data/kakao.json", document.baseURI)),
         fetch(new URL("data/channel.json", document.baseURI)),
+        fetch(new URL("data/eagledream.json", document.baseURI)),
       ]);
-      if (!responses[0].ok || !responses[1].ok) throw new Error("fetch");
+      if (!responses[0].ok || !responses[1].ok || !responses[2].ok) throw new Error("fetch");
       var kakaoJson = await responses[0].json();
       var channelJson = await responses[1].json();
+      var eagleJson = await responses[2].json();
       var kakaoVideos = Array.isArray(kakaoJson) ? kakaoJson : kakaoJson.videos;
       var channelVideos = Array.isArray(channelJson) ? channelJson : channelJson.videos;
-      if (!Array.isArray(kakaoVideos) || !Array.isArray(channelVideos)) throw new Error("shape");
+      var eagleVideos = Array.isArray(eagleJson) ? eagleJson : eagleJson.videos;
+      if (!Array.isArray(kakaoVideos) || !Array.isArray(channelVideos) || !Array.isArray(eagleVideos)) throw new Error("shape");
       state.kakao = kakaoVideos.map(normalizeKakao).filter(function (item) { return item.id; });
       state.channel = channelVideos.map(function (item) {
         return normalizeChannel(item, "channel");
       }).filter(function (item) { return item.id; });
+      state.eagledream = eagleVideos.map(normalizeEagle).filter(function (item) { return item.id; });
       state.loading = false;
       render();
     } catch (error) {

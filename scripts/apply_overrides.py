@@ -32,7 +32,7 @@
 
 코칭으로 옮긴 채널 영상은 공개 채널 JSON에서 빼서 ``--coaching`` 평문 파일에 붙입니다.
 코칭 평문에서 다른 분류로 옮기면 공개 채널 JSON으로 돌아갑니다.
-코칭으로 넣을 때 하위 분류(셀프리더코칭, 하드코아코칭, 그 외 코칭)가 없으면 제목 규칙으로 붙입니다.
+코칭으로 넣을 때 하위 분류(셀프리더코칭, 하드코아코칭, 그 외 코칭)가 없으면 classify_coaching.py 규칙(id 지정, 2026-06-01 이후는 셀프리더코칭, 그 이전은 제목 규칙)으로 붙입니다. 제목은 바꾸지 않습니다.
 반영 후 data/coaching.json 이 바뀌었으면 그 파일을 커밋합니다. 코칭 목록은 별도의 코칭 페이지에서 바로 보입니다.
 
 예::
@@ -51,6 +51,8 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+from classify_coaching import coaching_subcategory
+
 KAKAO_CATEGORIES = {"암웨이 관련", "일반 영상", "소비자에게", "미분류"}
 KAKAO_SUBS = {"제품설명", "사업·강의"}
 CHANNEL_CATEGORIES = {
@@ -67,15 +69,6 @@ CHANNEL_CATEGORIES = {
 }
 COACH_SUBS = {"셀프리더코칭", "하드코아코칭", "그 외 코칭"}
 KIND = "eunjo-video-overrides"
-
-
-def coaching_subcategory(title: str) -> str:
-    text = title or ""
-    if "하드코아" in text or "하드코어" in text:
-        return "하드코아코칭"
-    if "셀프리더" in text or "셀프코칭방" in text:
-        return "셀프리더코칭"
-    return "그 외 코칭"
 
 
 def configure_stdio() -> None:
@@ -263,8 +256,12 @@ def main() -> None:
             needs_coaching = True
         current = "channel" if in_channel is not None else "coaching"
         if target == "coaching" and subcategory is None:
-            title = (in_channel or in_coaching or {}).get("title") or ""
-            subcategory = coaching_subcategory(str(title))
+            src = in_channel or in_coaching or {}
+            subcategory = coaching_subcategory(
+                str(src.get("title") or ""),
+                str(src.get("date") or ""),
+                str(src.get("id") or video_id),
+            )
         plans.append({
             "kind": "mine",
             "item": in_channel if in_channel is not None else in_coaching,
@@ -322,7 +319,11 @@ def main() -> None:
         after_sub = plan.get("subcategory")
         if plan["target"] == "coaching":
             if after_sub not in COACH_SUBS:
-                after_sub = coaching_subcategory(str(item.get("title") or ""))
+                after_sub = coaching_subcategory(
+                    str(item.get("title") or ""),
+                    str(item.get("date") or ""),
+                    str(item.get("id") or ""),
+                )
         else:
             after_sub = None
         changed = item.get("category") != plan["category"] or item.get("subcategory") != after_sub

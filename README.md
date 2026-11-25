@@ -106,7 +106,7 @@ python3 scripts/apply_overrides.py ./eunjo-overrides-2026-11-18.json \
 
 `--dry-run`을 빼면 파일을 실제로 고칩니다. 코칭으로 옮기거나 코칭 평문에만 있는 영상을 건드릴 때는 `--coaching`이 필요합니다.
 
-- 채널 영상을 `코칭`으로 옮기면 공개 `data/channel.json`에서 빠지고 `data/coaching.json`으로 갑니다. 하위 분류가 없으면 제목 규칙(`셀프리더`/`셀프코칭방` → 셀프리더코칭, `하드코아`/`하드코어` → 하드코아코칭, 그 밖은 그 외 코칭)으로 붙입니다.
+- 채널 영상을 `코칭`으로 옮기면 공개 `data/channel.json`에서 빠지고 `data/coaching.json`으로 갑니다. 하위 분류가 없으면 `classify_coaching.py` 규칙으로 붙입니다. 제목은 바꾸지 않습니다.
 - 코칭 영상을 다른 분류로 옮기면 코칭 목록에서 빠지고 공개 채널 목록으로 돌아갑니다.
 - 같은 파일을 한 번 더 실행해도 이미 반영된 항목은 다시 쓰지 않습니다.
 
@@ -114,7 +114,7 @@ python3 scripts/apply_overrides.py ./eunjo-overrides-2026-11-18.json \
 
 ## 코칭 영상 넣기
 
-코칭 목록은 `data/coaching.json`에 평문으로 두고, 코칭 페이지에서 바로 보여 줍니다. 제목으로 하위 분류를 붙인 뒤 공개 파일을 만듭니다.
+코칭 목록은 `data/coaching.json`에 평문으로 두고, 코칭 페이지에서 바로 보여 줍니다. 아래 규칙으로 하위 분류를 붙인 뒤 공개 파일을 만듭니다. 제목 자체는 바꾸지 않습니다.
 
 ```bash
 python3 scripts/classify_coaching.py /경로/coaching.json
@@ -124,6 +124,9 @@ python3 scripts/publish_coaching.py /경로/coaching.json
 `publish_coaching.py`만 실행해도 하위 분류를 붙이고 `data/coaching.json`을 씁니다. 매일 새 일부공개 영상이 코칭이면 평문에 추가한 뒤 위 명령으로 공개 파일을 만들고, `data/coaching.json`을 커밋합니다.
 
 - 입력은 채널 영상과 같은 모양의 JSON 배열이거나 `{ "videos": [ ... ] }` 입니다.
-- 제목 규칙: `하드코아`/`하드코어` → 하드코아코칭, `셀프리더`/`셀프코칭방` → 셀프리더코칭, 그 밖은 그 외 코칭.
+- 분류 우선순위:
+  1. `scripts/classify_coaching.py`의 `MANUAL_SUBCATEGORY`에 적힌 영상 id
+  2. 날짜가 2026-06-01 이후이면 제목과 관계없이 셀프리더코칭
+  3. 그 이전은 제목 규칙: `하드코아`/`하드코어` → 하드코아코칭, `셀프리더`/`셀프코칭방` → 셀프리더코칭, 그 밖은 그 외 코칭.
 - 메인 화면의 직찍 강의 탭에는 코칭 목록이 없습니다.
 - 제목에 '코칭'이 있어도 코칭 페이지에 두지 않는 영상이 있습니다. id는 `scripts/coaching_exceptions.py`에 있고, 직찍 강의의 `각오미팅` 또는 `제품설명`에 둡니다. 매일 분류할 때 이 목록을 다시 코칭으로 넣지 마세요.

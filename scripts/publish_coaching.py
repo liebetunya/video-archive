@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """코칭 평문 JSON을 공개 데이터 파일로 복사합니다.
 
-제목 규칙으로 하위 분류를 붙인 뒤 data/coaching.json 에 저장합니다.
+classify_coaching.py 규칙으로 하위 분류를 붙인 뒤 data/coaching.json 에 저장합니다. 제목은 바꾸지 않습니다.
 기본 출력은 개수만 보여 줍니다.
 
     python3 scripts/classify_coaching.py /경로/coaching.json

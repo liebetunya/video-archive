@@ -270,7 +270,15 @@
     });
   }
 
-  function coachingSubFromTitle(title) {
+  var SELF_LEADER_FROM = "2026-06-01";
+  var MANUAL_COACH_SUB = {
+    "7sxFu9Say5I": "셀프리더코칭",
+    "a1QRlReXPPM": "셀프리더코칭"
+  };
+
+  function coachingSubFromTitle(title, date, videoId) {
+    if (videoId && MANUAL_COACH_SUB[videoId]) return MANUAL_COACH_SUB[videoId];
+    if (date && date >= SELF_LEADER_FROM) return "셀프리더코칭";
     var text = title || "";
     if (text.indexOf("하드코아") !== -1 || text.indexOf("하드코어") !== -1) return "하드코아코칭";
     if (text.indexOf("셀프리더") !== -1 || text.indexOf("셀프코칭방") !== -1) return "셀프리더코칭";
@@ -1200,7 +1208,7 @@
         if (!Array.isArray(coachVideos)) throw new Error("shape");
         state.coaching = coachVideos.map(function (item) {
           var normalized = normalizeChannel(item, "coaching");
-          if (!normalized.subcategory) normalized.subcategory = coachingSubFromTitle(normalized.title);
+          if (!normalized.subcategory) normalized.subcategory = coachingSubFromTitle(normalized.title, normalized.date, normalized.id);
           return normalized;
         }).filter(function (item) { return item.id; });
         state.category = "코칭";

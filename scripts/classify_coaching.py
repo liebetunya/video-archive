@@ -2,13 +2,16 @@
 # -*- coding: utf-8 -*-
 """코칭 평문 JSON에 하위 분류를 붙입니다.
 
-제목 규칙:
-- '하드코아' 또는 '하드코어'가 있으면 하드코아코칭
-- '셀프리더' 또는 '셀프코칭방'이 있으면 셀프리더코칭
-- 그 밖의 코칭 제목은 그 외 코칭
+우선순위:
+1. scripts 안 MANUAL_SUBCATEGORY 의 영상 id 지정
+2. 날짜가 2026-06-01 이후이면 제목과 관계없이 셀프리더코칭
+3. 그 이전은 제목 규칙
+   - '하드코아' 또는 '하드코어'가 있으면 하드코아코칭
+   - '셀프리더' 또는 '셀프코칭방'이 있으면 셀프리더코칭
+   - 그 밖의 코칭 제목은 그 외 코칭
 
-분류를 붙인 뒤 scripts/publish_coaching.py 로 공개 파일 data/coaching.json 을
-만듭니다. 기본 출력은 개수만 보여 줍니다.
+제목 자체는 바꾸지 않습니다. 분류를 붙인 뒤 scripts/publish_coaching.py 로
+공개 파일 data/coaching.json 을 만듭니다. 기본 출력은 개수만 보여 줍니다.
 
     python3 scripts/classify_coaching.py /경로/coaching.json
     python3 scripts/publish_coaching.py /경로/coaching.json
@@ -26,6 +29,13 @@ SUB_HARD = "하드코아코칭"
 SUB_SELF = "셀프리더코칭"
 SUB_OTHER = "그 외 코칭"
 SUBS = (SUB_SELF, SUB_HARD, SUB_OTHER)
+SELF_LEADER_FROM = "2026-06-01"
+
+# 은조님 수동 분류. 날짜·제목 규칙보다 우선. 제목은 바꾸지 않습니다.
+MANUAL_SUBCATEGORY = {
+    "7sxFu9Say5I": SUB_SELF,  # 260308일 코칭 (2026-03-10)
+    "a1QRlReXPPM": SUB_SELF,  # 코칭. 핵심 감정 찾기. 260617수 (2026-06-19)
+}
 
 
 def configure_stdio() -> None:
@@ -34,7 +44,13 @@ def configure_stdio() -> None:
             stream.reconfigure(encoding="utf-8")
 
 
-def coaching_subcategory(title: str) -> str:
+def coaching_subcategory(title: str, date: str = "", video_id: str = "") -> str:
+    vid = str(video_id or "").strip()
+    if vid and vid in MANUAL_SUBCATEGORY:
+        return MANUAL_SUBCATEGORY[vid]
+    day = str(date or "").strip()
+    if day >= SELF_LEADER_FROM:
+        return SUB_SELF
     text = title or ""
     if "하드코아" in text or "하드코어" in text:
         return SUB_HARD
@@ -68,7 +84,11 @@ def classify(videos: list) -> list:
     for item in videos:
         if not isinstance(item, dict):
             continue
-        sub = coaching_subcategory(str(item.get("title") or ""))
+        sub = coaching_subcategory(
+            str(item.get("title") or ""),
+            str(item.get("date") or ""),
+            str(item.get("id") or ""),
+        )
         if item.get("subcategory") == sub and item.get("category") == "코칭":
             continue
         item["category"] = "코칭"
@@ -97,6 +117,17 @@ def main() -> None:
     for name in sorted(extra, key=lambda value: str(value)):
         print("- " + str(name) + ": " + str(counts[name]) + "개")
     print("하위 분류를 바꾼 항목 " + str(len(changed)) + "건")
+    for item in changed:
+        print(
+            "- "
+            + str(item.get("date") or "")
+            + " "
+            + str(item.get("id") or "")
+            + " → "
+            + str(item.get("subcategory"))
+            + "  "
+            + str(item.get("title") or "")
+        )
     if args.dry_run:
         print("dry-run 이라 파일은 쓰지 않았습니다.")
         return

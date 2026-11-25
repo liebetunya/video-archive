@@ -14,7 +14,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="영상 아카이브">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/styles.css?v=20261126">
 </head>
 <body class="page-coaching">
   <a class="skip" href="#grid">영상 목록으로 건너뛰기</a>
@@ -44,6 +44,7 @@
         <div class="toolbar-actions">
           <button type="button" id="export-btn">변경사항 내보내기</button>
           <button type="button" id="import-btn">가져오기</button>
+          <button type="button" id="clear-overrides-btn" hidden>반영 완료, 기록 지우기</button>
           <input id="import-file" type="file" accept="application/json,.json" hidden>
         </div>
       </div>
@@ -82,6 +83,6 @@
 
   <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
   <noscript><p class="note">자바스크립트를 켜야 아카이브를 볼 수 있어요.</p></noscript>
-  <script src="../js/app.js"></script>
+  <script src="../js/app.js?v=20261126"></script>
 </body>
 </html>

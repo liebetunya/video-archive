@@ -299,7 +299,7 @@ h1 {
   letter-spacing: -0.02em;
 }
 
-.toolbar-actions { display: flex; gap: 8px; }
+.toolbar-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 
 .toolbar-actions button,
 .btn-text {

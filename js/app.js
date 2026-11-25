@@ -61,6 +61,7 @@
     exportBtn: $("export-btn"),
     importBtn: $("import-btn"),
     importFile: $("import-file"),
+    clearOverridesBtn: $("clear-overrides-btn"),
     toast: $("toast"),
     descBackdrop: $("desc-backdrop"),
     descSheetPrefix: $("desc-sheet-prefix"),
@@ -325,7 +326,8 @@
 
   function saveOverrides() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.overrides));
+      if (!Object.keys(state.overrides).length) localStorage.removeItem(STORAGE_KEY);
+      else localStorage.setItem(STORAGE_KEY, JSON.stringify(state.overrides));
       return true;
     } catch (error) {
       toast("이 브라우저에 저장하지 못했어요.");
@@ -464,6 +466,112 @@
       }
     }
     return null;
+  }
+
+  function mapCoaching(item) {
+    var normalized = normalizeChannel(item, "coaching");
+    if (!normalized.subcategory) normalized.subcategory = coachingSubFromTitle(normalized.title, normalized.date, normalized.id);
+    return normalized;
+  }
+
+  async function loadVideoFile(path, mapFn) {
+    var res = await fetch(assetUrl(path));
+    if (!res.ok) throw new Error("fetch");
+    var json = await res.json();
+    var videos = Array.isArray(json) ? json : json.videos;
+    if (!Array.isArray(videos)) throw new Error("shape");
+    return videos.map(mapFn).filter(function (item) { return item.id; });
+  }
+
+  async function ensurePruneData() {
+    if (!Object.keys(state.overrides).length) return;
+    var need = { kakao: false, channel: false, eagledream: false, coaching: false };
+    Object.keys(state.overrides).forEach(function (key) {
+      var entry = state.overrides[key];
+      var src = (entry && entry.source) || String(key).split(":")[0];
+      if (src === "kakao" || src === "playlist") need.kakao = true;
+      if (src === "channel" || src === "coaching") {
+        need.channel = true;
+        need.coaching = true;
+      }
+      if (src === "eagledream") need.eagledream = true;
+    });
+    try {
+      var jobs = [];
+      if (need.kakao && !state.kakao.length) {
+        jobs.push(loadVideoFile("data/kakao.json", normalizeKakao).then(function (items) { state.kakao = items; }));
+      }
+      if (need.channel && !state.channel.length) {
+        jobs.push(loadVideoFile("data/channel.json", function (item) { return normalizeChannel(item, "channel"); }).then(function (items) { state.channel = items; }));
+      }
+      if (need.eagledream && !state.eagledream.length) {
+        jobs.push(loadVideoFile("data/eagledream.json", normalizeEagle).then(function (items) { state.eagledream = items; }));
+      }
+      if (need.coaching && !state.coaching.length) {
+        jobs.push(loadVideoFile("data/coaching.json", mapCoaching).then(function (items) { state.coaching = items; }));
+      }
+      if (jobs.length) await Promise.all(jobs);
+    } catch (error) {
+      // 비교할 데이터를 못 받으면 덮어쓰기는 그대로 둡니다.
+    }
+  }
+
+  function findRawForOverride(entry) {
+    if (!entry || !entry.id) return null;
+    var sources = [entry.source];
+    if (entry.source === "kakao") sources.push("playlist");
+    if (entry.source === "playlist") sources.push("kakao");
+    var i;
+    for (i = 0; i < sources.length; i += 1) {
+      var found = findRaw(sources[i] + ":" + entry.id);
+      if (found) return found;
+    }
+    if (entry.source === "channel" && entry.category === "코칭") return findRaw("coaching:" + entry.id);
+    if (entry.source === "coaching" && entry.category && entry.category !== "코칭") return findRaw("channel:" + entry.id);
+    return null;
+  }
+
+  function overrideAlreadyApplied(entry, item) {
+    if (!item || entry.category !== item.category) return false;
+    var wantSub = entry.subcategory || null;
+    var gotSub = item.subcategory || null;
+    if (wantSub) {
+      if (wantSub !== gotSub) return false;
+    } else if (entry.category === "코칭") {
+      if (COACH_SUBS.indexOf(gotSub) === -1) return false;
+    } else if (gotSub) {
+      return false;
+    }
+    if (hasOwn(entry, "description")) {
+      if (String(entry.description || "").trim() !== (item.description || "")) return false;
+    }
+    return true;
+  }
+
+  function pruneAppliedOverrides() {
+    var keys = Object.keys(state.overrides);
+    if (!keys.length) return 0;
+    var kept = {};
+    var removed = 0;
+    keys.forEach(function (key) {
+      var entry = state.overrides[key];
+      var item = findRawForOverride(entry);
+      if (item && overrideAlreadyApplied(entry, item)) removed += 1;
+      else kept[key] = entry;
+    });
+    if (!removed) return 0;
+    state.overrides = kept;
+    saveOverrides();
+    return removed;
+  }
+
+  function clearLocalOverrideRecords() {
+    if (!window.confirm("사이트에 반영된 수정 기록을 이 브라우저에서 지울까요?")) return;
+    state.overrides = {};
+    state.selected.clear();
+    try { localStorage.removeItem(STORAGE_KEY); } catch (error) { /* ignore */ }
+    toast("이 브라우저의 수정 기록을 지웠어요.");
+    render();
   }
 
   function matches(item, query) {
@@ -958,6 +1066,7 @@
     els.note.textContent = editCount
       ? "이 브라우저에만 변경 " + editCount + "건이 저장되어 있어요. 다른 기기나 저장소에는 반영되지 않아요."
       : "변경사항은 이 브라우저에만 저장됩니다. 다른 기기에는 내보낸 파일을 가져와 주세요.";
+    if (els.clearOverridesBtn) els.clearOverridesBtn.hidden = !editCount;
     renderDescSheet();
     focusDescEditor();
 
@@ -1151,6 +1260,7 @@
   els.moveBtn.addEventListener("click", moveSelected);
   els.exportBtn.addEventListener("click", exportOverrides);
   els.importBtn.addEventListener("click", function () { els.importFile.click(); });
+  if (els.clearOverridesBtn) els.clearOverridesBtn.addEventListener("click", clearLocalOverrideRecords);
   els.importFile.addEventListener("change", function () {
     var file = els.importFile.files && els.importFile.files[0];
     els.importFile.value = "";
@@ -1202,19 +1312,13 @@
     }
     if (PAGE_MODE === "coaching") {
       try {
-        var coachRes = await fetch(assetUrl("data/coaching.json"));
-        if (!coachRes.ok) throw new Error("fetch");
-        var coachJson = await coachRes.json();
-        var coachVideos = Array.isArray(coachJson) ? coachJson : coachJson.videos;
-        if (!Array.isArray(coachVideos)) throw new Error("shape");
-        state.coaching = coachVideos.map(function (item) {
-          var normalized = normalizeChannel(item, "coaching");
-          if (!normalized.subcategory) normalized.subcategory = coachingSubFromTitle(normalized.title, normalized.date, normalized.id);
-          return normalized;
-        }).filter(function (item) { return item.id; });
+        state.coaching = await loadVideoFile("data/coaching.json", mapCoaching);
         state.category = "코칭";
+        await ensurePruneData();
+        var prunedCoach = pruneAppliedOverrides();
         state.loading = false;
         render();
+        if (prunedCoach) toast("저장소에 이미 반영된 수정 " + prunedCoach + "건을 이 브라우저에서 지웠어요.");
       } catch (error) {
         showFatal("영상을 불러오지 못했어요.");
       }
@@ -1239,8 +1343,11 @@
         return normalizeChannel(item, "channel");
       }).filter(function (item) { return item.id; });
       state.eagledream = eagleVideos.map(normalizeEagle).filter(function (item) { return item.id; });
+      await ensurePruneData();
+      var pruned = pruneAppliedOverrides();
       state.loading = false;
       render();
+      if (pruned) toast("저장소에 이미 반영된 수정 " + pruned + "건을 이 브라우저에서 지웠어요.");
     } catch (error) {
       showFatal("영상을 불러오지 못했어요.");
     }

@@ -4,8 +4,9 @@
 
 우선순위:
 1. scripts 안 MANUAL_SUBCATEGORY 의 영상 id 지정
-2. 날짜가 2026-06-01 이후이면 제목과 관계없이 셀프리더코칭
-3. 그 이전은 제목 규칙
+2. 날짜가 2026-06-01 부터 2026-11-25 까지이면 제목과 관계없이 셀프리더코칭
+   (셀프리더코칭은 2026-11-25 '셀프리더코칭 마지막'으로 끝남. 그 다음부터는 제목 규칙)
+3. 그 밖은 제목 규칙
    - '하드코아' 또는 '하드코어'가 있으면 하드코아코칭
    - '셀프리더' 또는 '셀프코칭방'이 있으면 셀프리더코칭
    - 그 밖의 코칭 제목은 그 외 코칭
@@ -30,10 +31,11 @@ SUB_SELF = "셀프리더코칭"
 SUB_OTHER = "그 외 코칭"
 SUBS = (SUB_SELF, SUB_HARD, SUB_OTHER)
 SELF_LEADER_FROM = "2026-06-01"
+SELF_LEADER_UNTIL = "2026-11-25"
 
 # 은조님 수동 분류. 날짜·제목 규칙보다 우선. 제목은 바꾸지 않습니다.
 MANUAL_SUBCATEGORY = {
-    "7sxFu9Say5I": SUB_SELF,  # 260308일 코칭 (2026-03-10)
+    "7sxFu9Say5I": SUB_HARD,  # 260308일 코칭 (2026-03-10). 2026-11-25 내보내기.
     "a1QRlReXPPM": SUB_SELF,  # 코칭. 핵심 감정 찾기. 260617수 (2026-06-19)
 }
 
@@ -49,7 +51,7 @@ def coaching_subcategory(title: str, date: str = "", video_id: str = "") -> str:
     if vid and vid in MANUAL_SUBCATEGORY:
         return MANUAL_SUBCATEGORY[vid]
     day = str(date or "").strip()
-    if day >= SELF_LEADER_FROM:
+    if SELF_LEADER_FROM <= day <= SELF_LEADER_UNTIL:
         return SUB_SELF
     text = title or ""
     if "하드코아" in text or "하드코어" in text:

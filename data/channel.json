@@ -143,13 +143,14 @@
     "date": "2026-11-15",
     "duration": "7:28",
     "title": "레티놀 강의인줄 알았는데🤣_안수진리더님(261114토)",
-    "category": "미분류",
+    "category": "강의와미팅",
     "book": null,
     "speakers": [
       "안수진"
     ],
     "auto_reason": "제목이 레티놀 강의가 아니라고 명시",
-    "suggested_category": "강의와미팅"
+    "suggested_category": "강의와미팅",
+    "subcategory": null
   },
   {
     "id": "jATkPjufhBY",
@@ -2117,18 +2118,6 @@
     "speakers": [],
     "auto_reason": "책이름(미라클모닝 After50)",
     "suggested_category": null
-  },
-  {
-    "id": "tLKACOqr9ok",
-    "url": "https://youtu.be/tLKACOqr9ok",
-    "date": "2026-07-23",
-    "duration": "2:24:59",
-    "title": "260722수",
-    "category": "미분류",
-    "book": null,
-    "speakers": [],
-    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
-    "suggested_category": "강의와미팅"
   },
   {
     "id": "N33fFGeNe28",
@@ -5475,18 +5464,6 @@
     "speakers": [],
     "auto_reason": "제목에 아침북미팅",
     "suggested_category": null
-  },
-  {
-    "id": "KDQqn9WWbKI",
-    "url": "https://youtu.be/KDQqn9WWbKI",
-    "date": "2026-01-05",
-    "duration": "1:04:56",
-    "title": "26.01.04.하드코아방1",
-    "category": "미분류",
-    "book": null,
-    "speakers": [],
-    "auto_reason": "하드코아방 제목만 있고 주제 불명확",
-    "suggested_category": "강의와미팅"
   },
   {
     "id": "5hVFMh3_mVU",

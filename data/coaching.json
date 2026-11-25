@@ -486,7 +486,7 @@
     "speakers": [],
     "auto_reason": "제목에 코칭/셀프코칭방",
     "suggested_category": null,
-    "subcategory": "셀프리더코칭"
+    "subcategory": "하드코아코칭"
   },
   {
     "id": "0M6Qin7aCDo",
@@ -526,5 +526,31 @@
     "auto_reason": "제목에 코칭/셀프코칭방",
     "suggested_category": null,
     "subcategory": "하드코아코칭"
+  },
+  {
+    "id": "KDQqn9WWbKI",
+    "url": "https://youtu.be/KDQqn9WWbKI",
+    "date": "2026-01-05",
+    "duration": "1:04:56",
+    "title": "26.01.04.하드코아방1",
+    "category": "코칭",
+    "book": null,
+    "speakers": [],
+    "auto_reason": "하드코아방 제목만 있고 주제 불명확",
+    "suggested_category": "강의와미팅",
+    "subcategory": "하드코아코칭"
+  },
+  {
+    "id": "tLKACOqr9ok",
+    "url": "https://youtu.be/tLKACOqr9ok",
+    "date": "2026-07-23",
+    "duration": "2:24:59",
+    "title": "260722수",
+    "category": "코칭",
+    "book": null,
+    "speakers": [],
+    "auto_reason": "날짜만 있는 제목이라 내용 판단 어려움",
+    "suggested_category": "강의와미팅",
+    "subcategory": "셀프리더코칭"
   }
 ]

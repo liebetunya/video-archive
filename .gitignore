@@ -1,6 +1,6 @@
 .DS_Store
 __pycache__/
 *.pyc
-# 코칭 평문 JSON은 저장소에 두지 않습니다.
+# 작업용 *.private.json 은 저장소에 두지 않습니다. 공개 코칭은 data/coaching.json 입니다.
 *.private.json
 coaching.private.json

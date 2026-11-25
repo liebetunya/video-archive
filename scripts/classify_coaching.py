@@ -7,11 +7,11 @@
 - '셀프리더' 또는 '셀프코칭방'이 있으면 셀프리더코칭
 - 그 밖의 코칭 제목은 그 외 코칭
 
-평문 파일은 data/ 폴더에 두지 마세요. 분류를 붙인 뒤 encrypt_coaching.js 로
-data/coaching.enc.json 만 다시 만들어 커밋합니다. 기본 출력은 개수만 보여 줍니다.
+분류를 붙인 뒤 scripts/publish_coaching.py 로 공개 파일 data/coaching.json 을
+만듭니다. 기본 출력은 개수만 보여 줍니다.
 
-    python3 scripts/classify_coaching.py /저장소/밖/coaching.private.json
-    python3 scripts/classify_coaching.py /저장소/밖/coaching.private.json --dry-run
+    python3 scripts/classify_coaching.py /경로/coaching.json
+    python3 scripts/publish_coaching.py /경로/coaching.json
 """
 
 from __future__ import annotations
@@ -49,10 +49,9 @@ def fail(message: str) -> None:
 
 
 def load_videos(path: Path):
-    data_dir = (Path(__file__).resolve().parents[1] / "data").resolve()
     abs_path = path.resolve()
-    if abs_path == data_dir or data_dir in abs_path.parents:
-        fail("data/ 안의 파일은 입력으로 쓸 수 없습니다. 평문은 저장소 밖에 두세요.")
+    if abs_path.name.endswith(".enc.json"):
+        fail("암호문 파일은 입력으로 쓸 수 없습니다.")
     try:
         raw = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
@@ -106,7 +105,7 @@ def main() -> None:
         return
     args.coaching.write_text(json.dumps(container, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print("저장: " + str(args.coaching))
-    print("평문 파일은 커밋하지 마세요. encrypt_coaching.js 로 data/coaching.enc.json 을 다시 만드세요.")
+    print("공개 페이지에 반영하려면 scripts/publish_coaching.py 로 data/coaching.json 을 만드세요.")
 
 
 if __name__ == "__main__":

@@ -50,10 +50,6 @@
     subchips: $("subchips"),
     meta: $("result-meta"),
     note: $("save-note"),
-    coachNote: $("coach-note"),
-    coachText: $("coach-note-text"),
-    coachUnlock: $("coach-unlock"),
-    coachLock: $("coach-lock"),
     status: $("status"),
     grid: $("grid"),
     more: $("more"),
@@ -65,13 +61,6 @@
     exportBtn: $("export-btn"),
     importBtn: $("import-btn"),
     importFile: $("import-file"),
-    backdrop: $("backdrop"),
-    pwForm: $("pw-form"),
-    pw: $("pw"),
-    pwError: $("pw-error"),
-    pwOk: $("pw-ok"),
-    pwCancel: $("pw-cancel"),
-    pwLocal: $("pw-local"),
     toast: $("toast"),
     descBackdrop: $("desc-backdrop"),
     descSheetPrefix: $("desc-sheet-prefix"),
@@ -95,13 +84,10 @@
     channel: [],
     eagledream: [],
     coaching: [],
-    coachingOpen: false,
     loading: true,
     toastTimer: 0,
     searchTimer: 0,
     movesStamp: "",
-    vaultPayload: null,
-    vaultRequest: 0,
     lastFocus: null,
     editing: null,
     editDraft: "",
@@ -410,7 +396,7 @@
     state.editDraft = "";
     state.descFocus = false;
     if (els.descBackdrop) els.descBackdrop.hidden = true;
-    if (els.backdrop.hidden) els.wrap.inert = false;
+    if (els.wrap) els.wrap.inert = false;
     render();
   }
 
@@ -430,8 +416,8 @@
 
   function renderDescSheet() {
     var open = !!(state.editing && isMobileEditor());
-    els.descBackdrop.hidden = !open;
-    if (els.backdrop.hidden) els.wrap.inert = open;
+    if (els.descBackdrop) els.descBackdrop.hidden = !open;
+    if (els.wrap) els.wrap.inert = open;
     if (!open) return;
     var raw = findRaw(state.editing);
     var item = raw ? viewOf(raw) : null;
@@ -484,7 +470,7 @@
   }
 
   function baseItems() {
-    if (PAGE_MODE === "coaching") return state.coachingOpen ? state.coaching : [];
+    if (PAGE_MODE === "coaching") return state.coaching;
     if (state.tab === "eagledream") return state.eagledream;
     if (state.tab === "kakao" || state.tab === "consumer") return state.kakao;
     return state.channel;
@@ -608,7 +594,7 @@
       "aria-pressed": pressed ? "true" : "false",
       onClick: onClick,
     });
-    if (locked) button.appendChild(icon(state.coachingOpen ? "unlock" : "lock"));
+    if (locked) button.appendChild(icon("lock"));
     button.appendChild(document.createTextNode(label));
     if (count != null) button.appendChild(h("span", { class: "count", text: String(count) }));
     return button;
@@ -622,12 +608,7 @@
 
   function renderChips(items) {
     if (PAGE_MODE === "coaching") {
-      els.chips.hidden = !state.coachingOpen;
-      if (!state.coachingOpen) {
-        els.chips.replaceChildren();
-        hideSubchips();
-        return;
-      }
+      els.chips.hidden = false;
       var coachScroll = els.chips.scrollLeft;
       var coachCounts = countBy(items, "subcategory");
       var coachFrag = document.createDocumentFragment();
@@ -941,21 +922,7 @@
   }
 
   function renderCoachNote() {
-    if (!els.coachNote) return;
-    if (PAGE_MODE !== "coaching") {
-      els.coachNote.hidden = true;
-      return;
-    }
-    els.coachNote.hidden = false;
-    if (state.coachingOpen) {
-      els.coachText.textContent = "코칭 영상이 열려 있어요. 이 페이지를 닫으면 다시 잠깁니다.";
-      if (els.coachUnlock) els.coachUnlock.hidden = true;
-      if (els.coachLock) els.coachLock.hidden = false;
-    } else {
-      els.coachText.textContent = "암호화된 코칭 영상은 비밀번호를 입력해야 보여요.";
-      if (els.coachUnlock) els.coachUnlock.hidden = false;
-      if (els.coachLock) els.coachLock.hidden = true;
-    }
+    return;
   }
 
   function render() {
@@ -989,9 +956,7 @@
       els.status.hidden = false;
       els.status.className = "empty";
       els.status.replaceChildren();
-      if (PAGE_MODE === "coaching" && !state.coachingOpen) {
-        els.status.textContent = "비밀번호를 입력하면 코칭 영상이 보여요.";
-      } else if (state.query) {
+      if (state.query) {
         els.status.textContent = "검색 결과가 없어요.";
       } else if (PAGE_MODE === "coaching") {
         els.status.textContent = "코칭 영상이 없어요.";
@@ -1022,78 +987,6 @@
     state.sub = "전체";
     state.shown = PAGE;
     state.selected.clear();
-    render();
-  }
-
-  function openPassword() {
-    state.lastFocus = document.activeElement;
-    if (els.pwLocal) els.pwLocal.hidden = true;
-    els.pwError.hidden = true;
-    els.pw.value = "";
-    els.pwOk.disabled = false;
-    els.pwOk.textContent = "열기";
-    els.backdrop.hidden = false;
-    els.wrap.inert = true;
-    setTimeout(function () { els.pw.focus(); }, 30);
-  }
-
-  function closePassword() {
-    els.backdrop.hidden = true;
-    els.wrap.inert = false;
-    els.pw.value = "";
-    if (state.lastFocus && state.lastFocus.focus) state.lastFocus.focus();
-  }
-
-  async function unlock(password) {
-    if (!password) {
-      els.pwError.hidden = false;
-      els.pwError.textContent = "비밀번호를 입력해 주세요.";
-      return;
-    }
-    var request = ++state.vaultRequest;
-    els.pwOk.disabled = true;
-    els.pwOk.textContent = "확인 중…";
-    els.pwError.hidden = true;
-    try {
-      if (!state.vaultPayload) {
-        var response = await fetch(assetUrl("data/coaching.enc.json"));
-        if (!response.ok) throw Object.assign(new Error("fetch"), { code: "fetch" });
-        state.vaultPayload = await response.json();
-      }
-      var videos = await window.EunjoVault.decryptVault(state.vaultPayload, password);
-      if (request !== state.vaultRequest) return;
-      state.coaching = videos.map(function (item) {
-        var normalized = normalizeChannel(item, "coaching");
-        if (!normalized.subcategory) normalized.subcategory = coachingSubFromTitle(normalized.title);
-        return normalized;
-      }).filter(function (item) { return item.id; });
-      state.coachingOpen = true;
-      state.category = "코칭";
-      state.sub = "전체";
-      state.shown = PAGE;
-      state.selected.clear();
-      closePassword();
-      toast(state.coaching.length ? "코칭 영상 " + state.coaching.length + "개를 열었어요." : "열었지만 코칭 영상이 없어요.");
-      render();
-    } catch (error) {
-      if (request !== state.vaultRequest) return;
-      els.pwOk.disabled = false;
-      els.pwOk.textContent = "열기";
-      els.pwError.hidden = false;
-      els.pwError.textContent = error && error.code === "password"
-        ? "비밀번호가 맞지 않아요."
-        : "코칭 데이터를 열 수 없어요.";
-    }
-  }
-
-  function lockCoaching() {
-    state.coachingOpen = false;
-    state.coaching = [];
-    state.vaultRequest += 1;
-    state.selected.clear();
-    state.category = PAGE_MODE === "coaching" ? "코칭" : "전체";
-    state.sub = "전체";
-    toast("코칭 영상을 다시 잠갔어요.");
     render();
   }
 
@@ -1270,16 +1163,6 @@
     };
     reader.readAsText(file);
   });
-  if (els.coachUnlock) els.coachUnlock.addEventListener("click", openPassword);
-  if (els.coachLock) els.coachLock.addEventListener("click", lockCoaching);
-  if (els.pwCancel) els.pwCancel.addEventListener("click", closePassword);
-  els.pwForm.addEventListener("submit", function (event) {
-    event.preventDefault();
-    unlock(els.pw.value);
-  });
-  els.backdrop.addEventListener("click", function (event) {
-    if (event.target === els.backdrop) closePassword();
-  });
   els.descSheetText.addEventListener("input", function () {
     state.editDraft = els.descSheetText.value;
   });
@@ -1295,9 +1178,8 @@
     }
   });
   document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && !els.backdrop.hidden) closePassword();
-    else if (event.key === "Escape" && state.editing) closeDescEditor();
-    var typing = document.activeElement === els.q || document.activeElement === els.pw || (document.activeElement && document.activeElement.tagName === "TEXTAREA");
+    if (event.key === "Escape" && state.editing) closeDescEditor();
+    var typing = document.activeElement === els.q || (document.activeElement && document.activeElement.tagName === "TEXTAREA");
     if (event.key === "/" && !typing) {
       event.preventDefault();
       els.q.focus();
@@ -1310,10 +1192,23 @@
       return;
     }
     if (PAGE_MODE === "coaching") {
-      state.loading = false;
-      state.category = "코칭";
-      render();
-      openPassword();
+      try {
+        var coachRes = await fetch(assetUrl("data/coaching.json"));
+        if (!coachRes.ok) throw new Error("fetch");
+        var coachJson = await coachRes.json();
+        var coachVideos = Array.isArray(coachJson) ? coachJson : coachJson.videos;
+        if (!Array.isArray(coachVideos)) throw new Error("shape");
+        state.coaching = coachVideos.map(function (item) {
+          var normalized = normalizeChannel(item, "coaching");
+          if (!normalized.subcategory) normalized.subcategory = coachingSubFromTitle(normalized.title);
+          return normalized;
+        }).filter(function (item) { return item.id; });
+        state.category = "코칭";
+        state.loading = false;
+        render();
+      } catch (error) {
+        showFatal("영상을 불러오지 못했어요.");
+      }
       return;
     }
     try {

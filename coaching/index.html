@@ -8,6 +8,11 @@
   <meta name="description" content="셀프리더코칭, 하드코아코칭 자료">
   <title>코칭 아카이브</title>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" sizes="180x180">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="영상 아카이브">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="../css/styles.css">
 </head>
@@ -17,7 +22,7 @@
     <header class="hero">
       <p class="hero-links"><a class="quiet-link" href="../">영상 아카이브</a></p>
       <h1>코칭 아카이브</h1>
-      <p class="lede">셀프리더코칭과 하드코아코칭을 비밀번호로 엽니다.</p>
+      <p class="lede">셀프리더코칭과 하드코아코칭을 모았습니다.</p>
     </header>
 
     <div class="sticky">
@@ -35,7 +40,7 @@
 
     <div class="toolbar">
       <div class="toolbar-row">
-        <p id="result-meta" class="result-meta" aria-live="polite">잠겨 있음</p>
+        <p id="result-meta" class="result-meta" aria-live="polite">불러오는 중</p>
         <div class="toolbar-actions">
           <button type="button" id="export-btn">변경사항 내보내기</button>
           <button type="button" id="import-btn">가져오기</button>
@@ -45,12 +50,7 @@
       <p id="save-note" class="note">변경사항은 이 브라우저에만 저장됩니다. 다른 기기에는 내보낸 파일을 가져와 주세요.</p>
     </div>
 
-    <div id="coach-note" class="coach-note">
-      <p id="coach-note-text">암호화된 코칭 영상은 비밀번호를 입력해야 보여요.</p>
-      <button type="button" id="coach-unlock">잠금 열기</button>
-      <button type="button" id="coach-lock" hidden>다시 잠그기</button>
-    </div>
-    <div id="status" class="status">비밀번호를 입력하면 코칭 영상이 보여요.</div>
+    <div id="status" class="status">영상을 불러오는 중이에요.</div>
     <div id="grid" class="grid"></div>
     <button type="button" id="more" class="more" hidden>더 보기</button>
   </div>
@@ -63,22 +63,6 @@
         <button type="button" id="move-btn" disabled>이동</button>
         <button type="button" id="clear-sel">해제</button>
       </div>
-    </div>
-  </div>
-
-  <div id="backdrop" class="backdrop" hidden>
-    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="pw-title">
-      <form id="pw-form">
-        <h2 id="pw-title">코칭 영상 열기</h2>
-        <p class="dialog-copy">비밀번호는 이 기기에 저장하지 않아요. 페이지를 닫으면 다시 잠깁니다.</p>
-        <label class="sr" for="pw">비밀번호</label>
-        <input id="pw" type="password" maxlength="256" autocomplete="off" placeholder="비밀번호">
-        <p id="pw-error" class="pw-error" hidden></p>
-        <div class="dialog-actions">
-          <button type="button" id="pw-cancel" class="btn-ghost">취소</button>
-          <button type="submit" id="pw-ok" class="btn-primary">열기</button>
-        </div>
-      </form>
     </div>
   </div>
 
@@ -98,7 +82,6 @@
 
   <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
   <noscript><p class="note">자바스크립트를 켜야 아카이브를 볼 수 있어요.</p></noscript>
-  <script src="../js/vault.js"></script>
   <script src="../js/app.js"></script>
 </body>
 </html>

@@ -16,7 +16,7 @@
   var KAKAO_SUBS = ["제품설명", "사업·강의"];
   var CHANNEL_CATS = ["박주희북텔링", "최현홍북텔링", "화목한9시", "각오미팅", "제품설명", "박주희", "최현홍", "강의와미팅", "미분류"];
   var BOOK_CHIP_CATS = ["박주희북텔링"];
-  var EAGLE_SUBS = ["Q&A", "넛츠 앤 볼츠", "텐코아", "박주희"];
+  var EAGLE_SUBS = ["Q&A", "넛츠 앤 볼츠", "텐코아", "이동훈박주희"];
   var COACH_SUBS = ["셀프리더코칭", "하드코아코칭", "그 외 코칭"];
 
   var KAKAO_MOVES = [

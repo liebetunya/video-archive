@@ -98,6 +98,28 @@ h1 {
   letter-spacing: -0.02em;
 }
 
+.hero-links {
+  margin: 12px 0 0;
+}
+
+.quiet-link {
+  color: var(--text-2);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.quiet-link:hover,
+.quiet-link:focus-visible {
+  color: var(--text-2);
+  text-decoration: underline;
+}
+
+.page-coaching .sticky {
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+
 .sticky {
   position: sticky;
   top: 0;

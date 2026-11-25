@@ -32,7 +32,9 @@
 
 코칭으로 옮긴 채널 영상은 공개 채널 JSON에서 빼서 ``--coaching`` 평문 파일에 붙입니다.
 코칭 평문에서 다른 분류로 옮기면 공개 채널 JSON으로 돌아갑니다.
+코칭으로 넣을 때 하위 분류(셀프리더코칭, 하드코아코칭, 그 외 코칭)가 없으면 제목 규칙으로 붙입니다.
 평문 코칭 파일은 저장소에 커밋하지 말고, 반영 후 encrypt_coaching.js 로 다시 암호화하세요.
+코칭 목록은 별도의 코칭 페이지에서만 비밀번호로 엽니다.
 
 예::
 
@@ -56,6 +58,7 @@ CHANNEL_CATEGORIES = {
     "박주희북텔링",
     "최현홍북텔링",
     "화목한9시",
+    "각오미팅",
     "제품설명",
     "박주희",
     "최현홍",
@@ -63,7 +66,17 @@ CHANNEL_CATEGORIES = {
     "미분류",
     "코칭",
 }
+COACH_SUBS = {"셀프리더코칭", "하드코아코칭", "그 외 코칭"}
 KIND = "eunjo-video-overrides"
+
+
+def coaching_subcategory(title: str) -> str:
+    text = title or ""
+    if "하드코아" in text or "하드코어" in text:
+        return "하드코아코칭"
+    if "셀프리더" in text or "셀프코칭방" in text:
+        return "셀프리더코칭"
+    return "그 외 코칭"
 
 
 def configure_stdio() -> None:
@@ -145,7 +158,15 @@ def validate_entry(key: str, entry: dict):
     elif source in ("channel", "coaching"):
         if category not in CHANNEL_CATEGORIES:
             die(key + ": 채널에서 쓸 수 없는 분류입니다: " + str(category))
-        subcategory = None
+        if category == "코칭":
+            if subcategory in (None, ""):
+                subcategory = None
+            elif subcategory not in COACH_SUBS:
+                die(key + ": 코칭 하위 분류는 셀프리더코칭, 하드코아코칭, 그 외 코칭 중 하나여야 합니다.")
+        elif subcategory not in (None, ""):
+            die(key + ": 이 분류에는 하위 분류를 둘 수 없습니다.")
+        else:
+            subcategory = None
     else:
         die(key + ": source 는 kakao, playlist, channel, coaching 중 하나여야 합니다.")
     if "description" in entry and not isinstance(entry.get("description"), str):
@@ -242,10 +263,14 @@ def main() -> None:
         if in_channel is None:
             needs_coaching = True
         current = "channel" if in_channel is not None else "coaching"
+        if target == "coaching" and subcategory is None:
+            title = (in_channel or in_coaching or {}).get("title") or ""
+            subcategory = coaching_subcategory(str(title))
         plans.append({
             "kind": "mine",
             "item": in_channel if in_channel is not None else in_coaching,
             "category": category,
+            "subcategory": subcategory,
             "current": current,
             "target": target,
             "source": source,
@@ -295,9 +320,16 @@ def main() -> None:
                 notes.append("카톡 " + video_id + ": " + str(before) + " → " + label + " (이미 반영됨)" + desc_note)
             continue
 
-        changed = item.get("category") != plan["category"]
+        after_sub = plan.get("subcategory")
+        if plan["target"] == "coaching":
+            if after_sub not in COACH_SUBS:
+                after_sub = coaching_subcategory(str(item.get("title") or ""))
+        else:
+            after_sub = None
+        changed = item.get("category") != plan["category"] or item.get("subcategory") != after_sub
         if changed:
             item["category"] = plan["category"]
+            item["subcategory"] = after_sub
         moved = plan["current"] != plan["target"]
         if moved:
             source_list = channel_videos if plan["current"] == "channel" else coaching_videos
@@ -319,7 +351,8 @@ def main() -> None:
         elif plan["source"] != plan["current"] and not moved and not changed:
             where = " · 기록된 source는 " + plan["source"] + ", 실제 위치는 " + plan["current"]
         if changed:
-            notes.append("채널 " + video_id + ": " + str(before) + " → " + plan["category"] + where + desc_note)
+            label = plan["category"] + (" · " + after_sub if after_sub else "")
+            notes.append("채널 " + video_id + ": " + str(before) + " → " + label + where + desc_note)
         elif desc_changed:
             notes.append("채널 " + video_id + ": 설명 수정" + where)
         else:

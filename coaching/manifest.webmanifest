@@ -1,0 +1,22 @@
+{
+  "name": "코칭 아카이브",
+  "short_name": "코칭 아카이브",
+  "start_url": "./?v=20261127",
+  "display": "standalone",
+  "background_color": "#F2F4F6",
+  "theme_color": "#EF4444",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

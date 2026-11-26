@@ -5,16 +5,16 @@
     "built_from": "metadata + captions + masked reviews; descriptions deferred"
   },
   "counts": {
-    "items": 332,
+    "items": 334,
     "category": {
       "암웨이 관련": 225,
-      "일반 영상": 62,
+      "일반 영상": 64,
       "미분류": 2,
       "소비자에게": 43
     },
     "subcategory": {
       "사업·강의": 211,
-      "(none)": 107,
+      "(none)": 109,
       "제품설명": 14
     },
     "metadata_failures": 0,
@@ -9708,6 +9708,40 @@
           "time": "2026-11-26T07:06:00"
         }
       ]
+    },
+    {
+      "id": "yNve77EBv0M",
+      "url": "https://www.youtube.com/watch?v=yNve77EBv0M",
+      "type": "watch",
+      "post_date": "2026-11-27",
+      "title": "🟣내년부터 ‘이것’ 시작한 3050만 살아남습니다 - 송길영 작가 1부 ‘언니가 대신 물어볼게’",
+      "channel": "MKTV",
+      "duration": 1138,
+      "upload_date": "2026-11-18",
+      "caption": null,
+      "description": "",
+      "category": "일반 영상",
+      "subcategory": null,
+      "suggested_category": null,
+      "tags": [],
+      "reviews": []
+    },
+    {
+      "id": "rHI_ERhHC_A",
+      "url": "https://www.youtube.com/watch?v=rHI_ERhHC_A",
+      "type": "watch",
+      "post_date": "2026-11-27",
+      "title": "🟣기업은 벌써 ‘이런 사람‘만 뽑기 시작했다 - 송길영 작가 2부 ‘언니가 대신 물어볼게’",
+      "channel": "MKTV",
+      "duration": 1054,
+      "upload_date": "2026-11-25",
+      "caption": null,
+      "description": "",
+      "category": "일반 영상",
+      "subcategory": null,
+      "suggested_category": null,
+      "tags": [],
+      "reviews": []
     },
     {
       "id": "KRPF-l_XrGo",

@@ -1,5 +1,43 @@
 [
   {
+    "id": "6Yzrm9q6PN4",
+    "url": "https://youtu.be/6Yzrm9q6PN4",
+    "date": "2026-11-27",
+    "duration": "29:33",
+    "title": "불변의 법칙 365~377(261127금)",
+    "category": "박주희북텔링",
+    "book": "불변의 법칙",
+    "speakers": [],
+    "auto_reason": "책이름(불변의 법칙)",
+    "suggested_category": null
+  },
+  {
+    "id": "6heNh3Ud5JM",
+    "url": "https://youtu.be/6heNh3Ud5JM",
+    "date": "2026-11-26",
+    "duration": "1:12:55",
+    "title": "나의 철학을 찾기_각오미팅 (261126목)",
+    "category": "각오미팅",
+    "book": null,
+    "speakers": [],
+    "auto_reason": "제목에 각오",
+    "suggested_category": null
+  },
+  {
+    "id": "XdFcZNOFevw",
+    "url": "https://youtu.be/XdFcZNOFevw",
+    "date": "2026-11-26",
+    "duration": "57:11",
+    "title": "올팩데이_화목한9시 이한나(261126목)",
+    "category": "화목한9시",
+    "book": null,
+    "speakers": [
+      "이한나"
+    ],
+    "auto_reason": "제목에 화목한9시",
+    "suggested_category": null
+  },
+  {
     "id": "py0VXQ0xz9U",
     "url": "https://youtu.be/py0VXQ0xz9U",
     "date": "2026-11-26",
